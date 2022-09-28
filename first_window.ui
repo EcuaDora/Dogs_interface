@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1200</width>
-    <height>738</height>
+    <height>720</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -285,8 +285,8 @@
    <widget class="QLabel" name="logo">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>50</y>
+      <x>60</x>
+      <y>10</y>
       <width>301</width>
       <height>251</height>
      </rect>
@@ -298,15 +298,15 @@
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap>../../Downloads/imgonline-com-ua-Resize-Pqc1dDhY21H0(1).png</pixmap>
+     <pixmap>main_logo.png</pixmap>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QLabel" name="ChosenFilesLabel">
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>420</y>
-      <width>331</width>
+      <y>390</y>
+      <width>311</width>
       <height>16</height>
      </rect>
     </property>
@@ -323,14 +323,14 @@
 background-color: rgb(5, 51, 110);</string>
     </property>
     <property name="text">
-     <string>КОЛИЧЕСТВО ВЫБРАННЫХ ФАЙЛОВ: 0 </string>
+     <string>Выбранные Файлы:   (0)</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>490</y>
+      <y>530</y>
       <width>331</width>
       <height>20</height>
      </rect>
@@ -351,11 +351,11 @@ background-color: rgb(5, 51, 110);</string>
      <string>ВЫБЕРИ ТИП АНАЛИЗА:</string>
     </property>
    </widget>
-   <widget class="QRadioButton" name="radioButton_2">
+   <widget class="QRadioButton" name="AnalysisType1">
     <property name="geometry">
      <rect>
       <x>70</x>
-      <y>520</y>
+      <y>560</y>
       <width>331</width>
       <height>21</height>
      </rect>
@@ -368,6 +368,9 @@ background-color: rgb(5, 51, 110);</string>
       <bold>true</bold>
      </font>
     </property>
+    <property name="toolTip">
+     <string>type_1</string>
+    </property>
     <property name="styleSheet">
      <string notr="true">color: rgb(111, 138, 188);
 background-color: rgb(5, 51, 110);</string>
@@ -376,11 +379,11 @@ background-color: rgb(5, 51, 110);</string>
      <string>Analysis (conventional)</string>
     </property>
    </widget>
-   <widget class="QRadioButton" name="radioButton_3">
+   <widget class="QRadioButton" name="AnalysisType2">
     <property name="geometry">
      <rect>
       <x>70</x>
-      <y>550</y>
+      <y>590</y>
       <width>289</width>
       <height>21</height>
      </rect>
@@ -392,6 +395,9 @@ background-color: rgb(5, 51, 110);</string>
       <weight>75</weight>
       <bold>true</bold>
      </font>
+    </property>
+    <property name="toolTip">
+     <string>type_2</string>
     </property>
     <property name="styleSheet">
      <string notr="true">color: rgb(147, 115, 168);
@@ -401,11 +407,11 @@ background-color: rgb(5, 51, 110);</string>
      <string>Analysis (model based)</string>
     </property>
    </widget>
-   <widget class="QRadioButton" name="radioButton">
+   <widget class="QRadioButton" name="AnalysisType3">
     <property name="geometry">
      <rect>
       <x>70</x>
-      <y>580</y>
+      <y>620</y>
       <width>289</width>
       <height>21</height>
      </rect>
@@ -418,6 +424,9 @@ background-color: rgb(5, 51, 110);</string>
       <bold>true</bold>
      </font>
     </property>
+    <property name="toolTip">
+     <string>type_3</string>
+    </property>
     <property name="styleSheet">
      <string notr="true">color: rgb(129, 177, 101);
 background-color: rgb(5, 51, 110);</string>
@@ -426,7 +435,7 @@ background-color: rgb(5, 51, 110);</string>
      <string>Analysis (complicated)</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="PushButtonConfirm">
     <property name="geometry">
      <rect>
       <x>310</x>
@@ -456,9 +465,9 @@ background-color: rgb(46, 136, 12);</string>
    <widget class="Line" name="border">
     <property name="geometry">
      <rect>
-      <x>440</x>
+      <x>467</x>
       <y>0</y>
-      <width>16</width>
+      <width>20</width>
       <height>741</height>
      </rect>
     </property>
@@ -475,7 +484,7 @@ color: rgb(23, 49, 83);</string>
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>451</width>
+      <width>471</width>
       <height>741</height>
      </rect>
     </property>
@@ -484,11 +493,11 @@ color: rgb(23, 49, 83);</string>
 border-color: rgb(5, 51, 110);</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLineEdit" name="FileSearchLineEdit">
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>330</y>
+      <y>310</y>
       <width>331</width>
       <height>31</height>
      </rect>
@@ -509,11 +518,11 @@ background-color: rgb(255, 255, 255);</string>
      <string> Добавь нужные файлы: </string>
     </property>
    </widget>
-   <widget class="QDialogButtonBox" name="buttonBox">
+   <widget class="QDialogButtonBox" name="AccpeptFile">
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>370</y>
+      <y>350</y>
       <width>156</width>
       <height>23</height>
      </rect>
@@ -523,6 +532,29 @@ background-color: rgb(255, 255, 255);</string>
     </property>
     <property name="standardButtons">
      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="AddFile">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>270</y>
+      <width>331</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Добавить файл</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="FilesList">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>410</y>
+      <width>351</width>
+      <height>111</height>
+     </rect>
     </property>
    </widget>
    <zorder>left_side_bar</zorder>
@@ -536,16 +568,18 @@ background-color: rgb(255, 255, 255);</string>
    <zorder>label_12</zorder>
    <zorder>label_13</zorder>
    <zorder>label_9</zorder>
-   <zorder>label_2</zorder>
+   <zorder>ChosenFilesLabel</zorder>
    <zorder>label_3</zorder>
-   <zorder>radioButton_2</zorder>
-   <zorder>radioButton_3</zorder>
-   <zorder>radioButton</zorder>
+   <zorder>AnalysisType1</zorder>
+   <zorder>AnalysisType2</zorder>
+   <zorder>AnalysisType3</zorder>
    <zorder>border</zorder>
    <zorder>logo</zorder>
-   <zorder>lineEdit</zorder>
-   <zorder>buttonBox</zorder>
-   <zorder>pushButton</zorder>
+   <zorder>FileSearchLineEdit</zorder>
+   <zorder>AccpeptFile</zorder>
+   <zorder>PushButtonConfirm</zorder>
+   <zorder>AddFile</zorder>
+   <zorder>FilesList</zorder>
   </widget>
  </widget>
  <resources/>

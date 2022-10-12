@@ -1,8 +1,7 @@
-from PyQt5 import QtWidgets, uic
+from PyQt5 import QtWidgets, uic, QtCore
 import sys
 from validate_csv_file import validate_csv
-
-
+from itertools import count
 
 analysis_types = {
     'type_1': 'Analysis (conventional)',
@@ -35,6 +34,7 @@ class Ui(QtWidgets.QMainWindow):
         self.file_search_line = self.findChild(QtWidgets.QLineEdit, 'FileSearchLineEdit')
 
         self.files_list = self.findChild(QtWidgets.QListWidget, 'FilesList')
+        self.files_list.itemDoubleClicked.connect(self.RemoveFileFromList)
 
 
 
@@ -54,6 +54,8 @@ class Ui(QtWidgets.QMainWindow):
         self.show()
 
 
+    def update_files_amount_label(self):
+        self.chosen_flies_label.setText(f'Выбранные Файлы:   ({len(self.chosen_flies)})')
 
     def change_analysis_type(self, button):
         self.analysis_type = button.toolTip()
@@ -65,9 +67,10 @@ class Ui(QtWidgets.QMainWindow):
 
     def AcceptFileButtonPresse(self):
         file_path = self.file_search_line.text()
+        validation_result = validate_csv(file_path)
 
-        if not validate_csv(file_path):
-            #TODO: Вывести ошибку
+        if validation_result:
+            print(validation_result)
             return
 
         if file_path in self.chosen_flies:
@@ -76,8 +79,8 @@ class Ui(QtWidgets.QMainWindow):
 
 
         self.chosen_flies.append(file_path)
-        QtWidgets.QListWidgetItem(file_path, self.files_list)
-        self.chosen_flies_label.setText(f'Выбранные Файлы:   ({len(self.chosen_flies)})')
+        self.f = QtWidgets.QListWidgetItem(file_path, self.files_list)
+        self.update_files_amount_label()
 
 
     def RejectFileButtonPresse(self):
@@ -88,6 +91,20 @@ class Ui(QtWidgets.QMainWindow):
         file_path, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Открыть файл', '.', 'SCV File (*.csv)')
         self.file_search_line.clear()
         self.file_search_line.insert(file_path)
+
+
+    def RemoveFileFromList(self, item):
+        for row in count():
+            list_item = self.files_list.item(row)
+
+            if list_item == None:
+                break
+
+            if item.text() == list_item.text():
+                self.files_list.takeItem(row)
+                self.chosen_flies.remove(item.text())
+                self.update_files_amount_label()
+
 
 
 

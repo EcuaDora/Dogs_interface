@@ -424,9 +424,6 @@ background-color: rgb(5, 51, 110);</string>
       <bold>true</bold>
      </font>
     </property>
-    <property name="toolTip">
-     <string>type_3</string>
-    </property>
     <property name="styleSheet">
      <string notr="true">color: rgb(129, 177, 101);
 background-color: rgb(5, 51, 110);</string>
@@ -557,6 +554,61 @@ background-color: rgb(255, 255, 255);</string>
      </rect>
     </property>
    </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>-20</y>
+      <width>281</width>
+      <height>191</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: transparent;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>cloud.png</pixmap>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="MessageTextArea">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>30</y>
+      <width>191</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="cursor" stdset="0">
+     <cursorShape>ArrowCursor</cursorShape>
+    </property>
+    <property name="mouseTracking">
+     <bool>false</bool>
+    </property>
+    <property name="acceptDrops">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: transparent;</string>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+    <property name="html">
+     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Ошибка&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
    <zorder>left_side_bar</zorder>
    <zorder>label_6</zorder>
    <zorder>label_8</zorder>
@@ -580,6 +632,8 @@ background-color: rgb(255, 255, 255);</string>
    <zorder>PushButtonConfirm</zorder>
    <zorder>AddFile</zorder>
    <zorder>FilesList</zorder>
+   <zorder>label</zorder>
+   <zorder>MessageTextArea</zorder>
   </widget>
  </widget>
  <resources/>

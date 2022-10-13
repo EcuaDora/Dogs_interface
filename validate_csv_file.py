@@ -1,6 +1,6 @@
 import os
 import csv
-
+from itertools import count
 
 def does_file_exists(file_path):
     if not os.path.isfile(file_path):
@@ -13,7 +13,6 @@ def does_file_exists(file_path):
 
 
 
-#FIXME: Затычка
 def validate_csv(file_path):
 
     file_check = does_file_exists(file_path)
@@ -22,7 +21,11 @@ def validate_csv(file_path):
 
     with open(file_path, newline='') as csv_file:
         reader = iter(csv.reader(csv_file, delimiter=',', quotechar='"'))
-        first_row = next(reader)
+
+        try:
+            first_row = next(reader)
+        except StopIteration:
+            return 'Файл - пустой'
 
         col_amount = len(first_row)
 
@@ -35,20 +38,19 @@ def validate_csv(file_path):
         else:
             return 'Неправильное количество колонок в файле'
 
-        current_row_number = 2
-        while True:
-            try:
-                current_row_number += 1
 
+        for current_row_number in count(1):
+
+            try:
                 row = next(reader)
                 if len(row) != col_amount:
                     return f'Неправильное количество столбцов в строке {current_row_number}'
 
-                for cell_type, cell in zip(col_types, row):
+                for cell_number, cell_type, cell in zip(count(1), col_types, row):
                     try:
                         cell_type(cell)
                     except ValueError:
-                        return f'Ячейка {cell} в строке {current_row_number} не приводится к типу {str(cell_type)}'
+                        return f'Ячейка {cell_number} в строке {current_row_number} не приводится к типу {str(cell_type)}'
 
             except StopIteration:
                 return 0

@@ -233,7 +233,7 @@ background-color: rgb(88, 129, 183);</string>
          <rect>
           <x>30</x>
           <y>10</y>
-          <width>121</width>
+          <width>161</width>
           <height>21</height>
          </rect>
         </property>
@@ -250,7 +250,7 @@ background-color: rgb(88, 129, 183);</string>
 background-color: rgb(88, 129, 183);</string>
         </property>
         <property name="text">
-         <string>2 страница</string>
+         <string>Analysis Results</string>
         </property>
        </widget>
       </widget>

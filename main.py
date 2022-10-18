@@ -1,6 +1,8 @@
-from PyQt5 import QtWidgets, uic, QtCore
+from PyQt5 import QtWidgets, uic, QtCore, QtGui
 import sys
-from validate_csv_file import validate_csv
+import os
+from qt_tools.validate_csv_file import validate_csv
+from qt_tools.messages import *
 from itertools import count
 
 analysis_types = {
@@ -9,11 +11,14 @@ analysis_types = {
     'type_3': 'Analysis (complicated)'
 }
 
+FIRST_WINDOW_PATH = os.path.join('interfaces', 'first_window.ui')
+SECOND_WINDOW_PATH = os.path.join('interfaces', 'second_window.ui')
+
 
 class Ui(QtWidgets.QMainWindow):
     def __init__(self):
         super(Ui, self).__init__()
-        uic.loadUi('first_window.ui', self)
+        uic.loadUi(FIRST_WINDOW_PATH, self)
 
         self.confirm_button = self.findChild(QtWidgets.QPushButton, 'PushButtonConfirm')
         self.confirm_button.clicked.connect(self.confirm_button_pressed)
@@ -52,16 +57,22 @@ class Ui(QtWidgets.QMainWindow):
 
         self.message_text_field = self.findChild(QtWidgets.QTextEdit, 'MessageTextArea')
 
+        self.update_files_amount_label()
+        self.send_user_message(greeting_message_string, 12)
 
         self.show()
 
 
-    def send_user_message(self, message):
+    def send_user_message(self, message, font_size = 10):
         self.message_text_field.clear()
+        self.message_text_field.setAlignment(QtCore.Qt.AlignCenter)
+        self.message_text_field.setFont(QtGui.QFont('Arial', font_size))
         self.message_text_field.insertPlainText(message)
 
+
     def update_files_amount_label(self):
-        self.chosen_flies_label.setText(f'Выбранные Файлы:   ({len(self.chosen_flies)})')
+        chosen_files_label = get_chosen_files_label(len(self.chosen_flies))
+        self.chosen_flies_label.setText(chosen_files_label)
 
     def change_analysis_type(self, button):
         self.analysis_type = button.toolTip()
@@ -80,14 +91,14 @@ class Ui(QtWidgets.QMainWindow):
             return
 
         if file_path in self.chosen_flies:
-            self.send_user_message('Файл уже добавлен')
+            self.send_user_message(file_already_added_error_string)
             return
 
 
         self.chosen_flies.append(file_path)
         self.f = QtWidgets.QListWidgetItem(file_path, self.files_list)
         self.update_files_amount_label()
-        self.send_user_message('Файл добавлен')
+        self.send_user_message(file_added_success_string)
 
     def reject_file_button_pressed(self):
         self.file_search_line.clear()

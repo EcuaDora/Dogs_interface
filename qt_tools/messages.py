@@ -8,7 +8,10 @@ def get_bad_cell_error_string(cell_number, row_number, cell_type):
 bad_extension_error_string = '🐶: File has illegal extension'
 
 
-# Файл отсутствуетттттт
+
+
+
+# Файла нету ваще 
 file_doesnt_exist_error_string = '🐶: Such file doesnt exist'
 
 

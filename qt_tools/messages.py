@@ -14,7 +14,7 @@ file_doesnt_exist_error_string = '🐶: Such file doesnt exist'
 
 # Пустой файл
 empty_file_error_string = '🐶: File is empty'
-
+# Привет и ку всем!
 
 # Неправильное количество ячеек в строке
 def get_wrong_cells_amount_error_string(row_number):

@@ -1,3 +1,4 @@
+### Строки для интерфейса
 ## Строки с ошибками валидации
 
 # Плохая ячейка
@@ -46,5 +47,5 @@ greeting_message_string = """
 
 
 # Строка с выбраными файлами
-def  get_chosen_files_label(files_amount):
+def get_chosen_files_label(files_amount):
     return f'Chosen Files:   ({files_amount})'

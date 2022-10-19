@@ -42,16 +42,17 @@
     <property name="geometry">
      <rect>
       <x>600</x>
-      <y>120</y>
+      <y>150</y>
       <width>121</width>
-      <height>21</height>
+      <height>31</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>MS Shell Dlg 2</family>
-      <pointsize>16</pointsize>
+      <pointsize>14</pointsize>
       <weight>50</weight>
+      <italic>false</italic>
       <bold>false</bold>
      </font>
     </property>
@@ -59,14 +60,14 @@
      <string notr="true">color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
-     <string>HI!</string>
+     <string>ПРИВЕТ!</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
       <x>600</x>
-      <y>140</y>
+      <y>180</y>
       <width>281</width>
       <height>31</height>
      </rect>
@@ -74,7 +75,7 @@
     <property name="font">
      <font>
       <family>MS Shell Dlg 2</family>
-      <pointsize>16</pointsize>
+      <pointsize>14</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -86,14 +87,14 @@
      <string notr="true">color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
-     <string>HOW TO WORK WITH ME?</string>
+     <string>КАК СО МНОЙ РАБОТАТЬ?</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_8">
     <property name="geometry">
      <rect>
-      <x>590</x>
-      <y>260</y>
+      <x>620</x>
+      <y>250</y>
       <width>561</width>
       <height>21</height>
      </rect>
@@ -110,38 +111,14 @@
      <string notr="true">color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
-     <string> 1. Click on the &quot;ADD FILES&quot; button and</string>
+     <string> 1. НАЖМИТЕ НА ПОЛЕ ВВОДА И ВЫБЕРИТЕ ФАЙЛ, </string>
     </property>
    </widget>
    <widget class="QLabel" name="label_9">
     <property name="geometry">
      <rect>
-      <x>600</x>
+      <x>630</x>
       <y>320</y>
-      <width>561</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>MS Shell Dlg 2</family>
-      <pointsize>14</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: rgb(255, 255, 255);</string>
-    </property>
-    <property name="text">
-     <string>2. Click on &quot;OK&quot; to add the file or click on &quot;CANCEL&quot;  to not add it.</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_10">
-    <property name="geometry">
-     <rect>
-      <x>600</x>
-      <y>360</y>
       <width>534</width>
       <height>31</height>
      </rect>
@@ -158,15 +135,39 @@
      <string notr="true">color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
-     <string>3. If you want to add  more files, repeat steps 1 and 2.</string>
+     <string>2. НАЖМИТЕ НА &quot;ОК&quot;, ЧТОБЫ ДОБАВИТЬ ФАЙЛ, </string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_10">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>400</y>
+      <width>534</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>MS Shell Dlg 2</family>
+      <pointsize>14</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="text">
+     <string>3. ЕСЛИ ХОТИТЕ ДОБАВИТЬ ЕЩЕ ФАЙЛЫ, </string>
     </property>
    </widget>
    <widget class="QLabel" name="label_11">
     <property name="geometry">
      <rect>
-      <x>600</x>
-      <y>510</y>
-      <width>251</width>
+      <x>630</x>
+      <y>480</y>
+      <width>534</width>
       <height>31</height>
      </rect>
     </property>
@@ -182,39 +183,15 @@
      <string notr="true">color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
-     <string>5. Select the type of analysis.</string>
+     <string>4. ДАЛЕЕ ВЫБЕРИТЕ ТИП АНАЛИЗА ДАННЫХ.</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>600</x>
-      <y>560</y>
-      <width>281</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>MS Shell Dlg 2</family>
-      <pointsize>14</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: rgb(255, 255, 255);</string>
-    </property>
-    <property name="text">
-     <string>6. Click on the &quot;READY!&quot; button.</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_4">
-    <property name="geometry">
-     <rect>
-      <x>610</x>
-      <y>280</y>
-      <width>301</width>
+      <x>630</x>
+      <y>530</y>
+      <width>534</width>
       <height>21</height>
      </rect>
     </property>
@@ -230,14 +207,86 @@
      <string notr="true">color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
-     <string> select the file you want to explore.</string>
+     <string>5. НАЖМИТЕ НА КНОПКУ &quot;ГОТОВО!&quot;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>280</y>
+      <width>391</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>MS Shell Dlg 2</family>
+      <pointsize>14</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="text">
+     <string>КОТОРЫЙ БУДЕТЕ ИССЛЕДОВАТЬ.</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_12">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>350</y>
+      <width>521</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>MS Shell Dlg 2</family>
+      <pointsize>14</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="text">
+     <string>И  - НА &quot;CANCEL&quot;, ЧТОБЫ ЕГО НЕ ДОБАВЛЯТЬ.</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_13">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>430</y>
+      <width>441</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>MS Shell Dlg 2</family>
+      <pointsize>14</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="text">
+     <string>ТО ПОВТОРИТЕ ПУНКТЫ 1 И 2.</string>
     </property>
    </widget>
    <widget class="QLabel" name="logo">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>10</y>
+      <x>50</x>
+      <y>30</y>
       <width>301</width>
       <height>251</height>
      </rect>
@@ -249,7 +298,7 @@
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap>Dogs/Dogs_interface-main/main_logo.png</pixmap>
+     <pixmap>../images/main_logo.png</pixmap>
     </property>
    </widget>
    <widget class="QLabel" name="ChosenFilesLabel">
@@ -274,14 +323,14 @@
 background-color: rgb(5, 51, 110);</string>
     </property>
     <property name="text">
-     <string>SELECTED FILES:   (0)</string>
+     <string>Выбранные Файлы:   (0)</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>540</y>
+      <y>530</y>
       <width>331</width>
       <height>20</height>
      </rect>
@@ -299,14 +348,14 @@ background-color: rgb(5, 51, 110);</string>
 background-color: rgb(5, 51, 110);</string>
     </property>
     <property name="text">
-     <string>CHOOSE THE ANALYSIS TYPE:</string>
+     <string>ВЫБЕРИ ТИП АНАЛИЗА:</string>
     </property>
    </widget>
    <widget class="QRadioButton" name="AnalysisType1">
     <property name="geometry">
      <rect>
       <x>70</x>
-      <y>570</y>
+      <y>560</y>
       <width>331</width>
       <height>21</height>
      </rect>
@@ -334,7 +383,7 @@ background-color: rgb(5, 51, 110);</string>
     <property name="geometry">
      <rect>
       <x>70</x>
-      <y>600</y>
+      <y>590</y>
       <width>289</width>
       <height>21</height>
      </rect>
@@ -362,7 +411,7 @@ background-color: rgb(5, 51, 110);</string>
     <property name="geometry">
      <rect>
       <x>70</x>
-      <y>630</y>
+      <y>620</y>
       <width>289</width>
       <height>21</height>
      </rect>
@@ -374,9 +423,6 @@ background-color: rgb(5, 51, 110);</string>
       <weight>75</weight>
       <bold>true</bold>
      </font>
-    </property>
-    <property name="toolTip">
-     <string>type_3</string>
     </property>
     <property name="styleSheet">
      <string notr="true">color: rgb(129, 177, 101);
@@ -410,7 +456,7 @@ background-color: rgb(46, 136, 12);</string>
      <locale language="Russian" country="Russia"/>
     </property>
     <property name="text">
-     <string>READY!</string>
+     <string>ГОТОВО!</string>
     </property>
    </widget>
    <widget class="Line" name="border">
@@ -466,7 +512,7 @@ background-color: rgb(255, 255, 255);</string>
      <string/>
     </property>
     <property name="placeholderText">
-     <string/>
+     <string> Добавь нужные файлы: </string>
     </property>
    </widget>
    <widget class="QDialogButtonBox" name="AccpeptFile">
@@ -477,12 +523,6 @@ background-color: rgb(255, 255, 255);</string>
       <width>156</width>
       <height>23</height>
      </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
     </property>
     <property name="styleSheet">
      <string notr="true">color: rgb(255, 255, 255);</string>
@@ -500,18 +540,8 @@ background-color: rgb(255, 255, 255);</string>
       <height>31</height>
      </rect>
     </property>
-    <property name="font">
-     <font>
-      <pointsize>11</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: rgb(255, 255, 255);</string>
-    </property>
     <property name="text">
-     <string>ADD FILES</string>
+     <string>Добавить файл</string>
     </property>
    </widget>
    <widget class="QListWidget" name="FilesList">
@@ -524,103 +554,62 @@ background-color: rgb(255, 255, 255);</string>
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label_12">
+   <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>600</x>
-      <y>410</y>
-      <width>631</width>
-      <height>31</height>
+      <x>270</x>
+      <y>-30</y>
+      <width>301</width>
+      <height>191</height>
      </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>MS Shell Dlg 2</family>
-      <pointsize>14</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(255, 255, 255);</string>
+     <string notr="true">background-color: transparent;</string>
     </property>
     <property name="text">
-     <string>4. The files you have selected are displayed in the</string>
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>../images/cloud.png</pixmap>
     </property>
    </widget>
-   <widget class="QLabel" name="label_13">
+   <widget class="QTextEdit" name="MessageTextArea">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
-      <x>620</x>
-      <y>440</y>
-      <width>211</width>
-      <height>21</height>
+      <x>340</x>
+      <y>10</y>
+      <width>181</width>
+      <height>91</height>
      </rect>
     </property>
-    <property name="font">
-     <font>
-      <family>MS Shell Dlg 2</family>
-      <pointsize>14</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
+    <property name="cursor" stdset="0">
+     <cursorShape>ArrowCursor</cursorShape>
     </property>
-    <property name="styleSheet">
-     <string notr="true">color: rgb(255, 255, 255);</string>
+    <property name="mouseTracking">
+     <bool>false</bool>
     </property>
-    <property name="text">
-     <string> &quot;SELECTED FILES&quot; field. </string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_14">
-    <property name="geometry">
-     <rect>
-      <x>600</x>
-      <y>170</y>
-      <width>281</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>MS Shell Dlg 2</family>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="autoFillBackground">
+    <property name="acceptDrops">
      <bool>false</bool>
     </property>
     <property name="styleSheet">
-     <string notr="true">color:rgb(199, 199, 199);</string>
+     <string notr="true">background-color: transparent;
+border: transparent;
+</string>
     </property>
-    <property name="text">
-     <string>here are 6 simple steps</string>
+    <property name="readOnly">
+     <bool>true</bool>
     </property>
-   </widget>
-   <widget class="QLabel" name="label_15">
-    <property name="geometry">
-     <rect>
-      <x>620</x>
-      <y>460</y>
-      <width>411</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>MS Shell Dlg 2</family>
-      <pointsize>14</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: rgb(255, 255, 255);</string>
-    </property>
-    <property name="text">
-     <string> To delete a file from the field, click on it twice.</string>
+    <property name="html">
+     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;Гаф-Гаф🐶🐶🐶&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
    <zorder>left_side_bar</zorder>
@@ -631,6 +620,8 @@ background-color: rgb(255, 255, 255);</string>
    <zorder>label_5</zorder>
    <zorder>label_7</zorder>
    <zorder>label_4</zorder>
+   <zorder>label_12</zorder>
+   <zorder>label_13</zorder>
    <zorder>label_9</zorder>
    <zorder>ChosenFilesLabel</zorder>
    <zorder>label_3</zorder>
@@ -644,10 +635,8 @@ background-color: rgb(255, 255, 255);</string>
    <zorder>PushButtonConfirm</zorder>
    <zorder>AddFile</zorder>
    <zorder>FilesList</zorder>
-   <zorder>label_12</zorder>
-   <zorder>label_13</zorder>
-   <zorder>label_14</zorder>
-   <zorder>label_15</zorder>
+   <zorder>label</zorder>
+   <zorder>MessageTextArea</zorder>
   </widget>
  </widget>
  <resources/>

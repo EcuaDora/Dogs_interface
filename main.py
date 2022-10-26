@@ -5,6 +5,15 @@ from qt_tools.validate_csv_file import validate_csv
 from qt_tools.messages import *
 from itertools import count
 
+# To Do:
+# 1. Если не выбран анализ и нажата кнопка готов, то ничего не делать, а вывести в окне для сообщений "Выбери тип анализа"
+# 2. Подвинуть текст сообщения немного вниз
+# 3. Поменять шрифт сообщению
+# 4. в белом прямоугольнике выводить только название
+# 5. в выбранных файлах поменять шрифт, цвет и сократить до названий
+
+
+
 analysis_types = {
     'type_1': 'Analysis (conventional)',
     'type_2': 'Analysis (model based)',
@@ -19,6 +28,7 @@ class Ui(QtWidgets.QMainWindow):
     def __init__(self):
         super(Ui, self).__init__()
         uic.loadUi(FIRST_WINDOW_PATH, self)
+        
 
         self.confirm_button = self.findChild(QtWidgets.QPushButton, 'PushButtonConfirm')
         self.confirm_button.clicked.connect(self.confirm_button_pressed)
@@ -66,7 +76,7 @@ class Ui(QtWidgets.QMainWindow):
     def send_user_message(self, message, font_size = 10):
         self.message_text_field.clear()
         self.message_text_field.setAlignment(QtCore.Qt.AlignCenter)
-        self.message_text_field.setFont(QtGui.QFont('Arial', font_size))
+        self.message_text_field.setFont(QtGui.QFont('MS Shell Dlg 2', font_size))
         self.message_text_field.insertPlainText(message)
 
 
@@ -121,11 +131,39 @@ class Ui(QtWidgets.QMainWindow):
                 self.chosen_flies.remove(item.text())
                 self.update_files_amount_label()
 
+class Ui_Dialog(QtWidgets.QDialog):
+        def __init__(self):
+            super(Ui_Dialog, self).__init__()
+            uic.loadUi(SECOND_WINDOW_PATH, self)
+        # нужно по клику на кнопку ready из главного окна сделать:
+           #1. Открыть второе окно
+           #2. Отрисовать картинки 
+           #3. По окончании поменять текст в сообщении 
+           
+            
+          
 
+class MyWin(QtWidgets.QMainWindow):
+    def __init__(self):
+        super(MyWin, self).__init__()
+
+    def show_window_1(self):
+        self.w1 = Ui()
+        
+        self.w1.confirm_button.clicked.connect(self.show_window_2)
+        self.w1.confirm_button.clicked.connect(self.w1.close)
+        self.w1.show()
+    
+    def show_window_2(self):
+        self.w2 = Ui_Dialog()
+        self.w2.show()
+ 
+    
 def main():
     app = QtWidgets.QApplication(sys.argv)
-    window = Ui()
-    app.exec_()
+    w = MyWin()
+    w.show_window_1()
+    sys.exit(app.exec_())
 
 
 if __name__ == '__main__':

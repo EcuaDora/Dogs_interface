@@ -7,10 +7,14 @@ import os
 import glob
 import math
 import seaborn as sns
+from matplotlib import rcParams
 import matplotlib.pyplot as plt
 from StatTools.analysis.dpcca import dpcca
 from StatTools.analysis.movmean import movmean
 from StatTools.generators.base_filter import Filter
+from pprint import pprint
+pd.set_option('display.max_rows', 1000)
+
 
 
 def get_object(frame: np.array, background, coords: list, filtering: bool = True) -> tuple:
@@ -175,12 +179,7 @@ def get_pharm_statistics(data_file: str, min_len: int, mode: str, fps: float = 2
         data_list(list): list with parametrs in that order: [name, total distance, average speed, max speed, stop duration, sum top time, crosses count, first ascent latency]
     """
 
-    if mode == 'orig':
-        threshold_caff = 0.12658227848101222 #threshold for stop duration - quantile (0.27) of speeds in caff control group 
-        threshold_9j = 0.13448776627963102 #threshold for stop duration - quantile (0.27) of speeds in 9j control group 
-    elif mode == 'model':
-        threshold_caff = 0.43301794443107317
-        threshold_9j = 0.8079598948655203
+
     data = pd.read_csv(data_file, index_col=0)
     data = data.dropna(axis=0, how='all')
     data.index = range(0, len(data))
@@ -217,6 +216,8 @@ def get_pharm_statistics(data_file: str, min_len: int, mode: str, fps: float = 2
     a_speed = dist / max(times)
     data_list.append(a_speed)
 
+    threshold = 0.12
+
     # max speed
     N = 5
     prev = 0
@@ -233,11 +234,7 @@ def get_pharm_statistics(data_file: str, min_len: int, mode: str, fps: float = 2
     max_speed = np.max(speeds)
     data_list.append(max_speed)
 
-    # stop duration
-    if 'caff' in name:
-        threshold = threshold_caff
-    if '9j' in name:
-        threshold = threshold_9j
+
     a = []
     for i in range(len(res)):
         if res[i] <= threshold:
@@ -307,7 +304,7 @@ def tukeys_method(df: pd.DataFrame, variable: str, c: float = 0.25) -> list:
     return outliers
 
 
-def conventional_analysis(data_path: str, group_names: list, target_path: str, mode: str = 'orig'):
+def conventional_analysis(drugs_data: dict, target_path: str, mode: str = 'orig'):
     """
     Function for conventional analysis based on the estimation of multiple scalar metrics. 
     Saves csv file with patameters for groups to target_path.
@@ -318,10 +315,25 @@ def conventional_analysis(data_path: str, group_names: list, target_path: str, m
         target_path(str): path for saving files
         mode(str): 'model' or 'orig' trajectories, important for 'stop_duration' threshold
     """
+    all_files = []
+    files_by_groups = {}
+    groups_extents = {}
+
+    for drug_name, gruops in drugs_data.items():
+        extent = 0
+        for group_name, gruop_files in gruops.items():
+            files_by_groups[f'{drug_name}_{group_name}'] = gruop_files
+            groups_extents[f'{drug_name}_{group_name}'] = extent
+            all_files.extend(gruop_files)
+            extent += 1
+
+
     params = ['total_distance', 'average_speed', 'max_speed', 'stop_duration',
               'sum_top_time', 'crosses_count', 'first_ascent_latency']
+
     min_len = None
-    for csv_path in glob.glob(os.path.join(data_path, '*.csv')):
+
+    for csv_path in all_files:
         df = pd.read_csv(csv_path, index_col=0)
         df = df.dropna(axis=0, how='all')
         if min_len == None:
@@ -329,13 +341,15 @@ def conventional_analysis(data_path: str, group_names: list, target_path: str, m
         elif df.shape[0] < min_len:
             min_len = df.shape[0]
 
-    for group_name in group_names:
+
+    for group_name, gruop_files in files_by_groups.items():
+
         group_data_list = []
-        for file_path in tqdm(glob.glob(os.path.join(data_path, group_name + '*.csv'))):
+        for file_path in tqdm(gruop_files):
             group_data_list.append(get_pharm_statistics(file_path, min_len, mode))
 
         group_data_df = pd.DataFrame(group_data_list, columns=['video_name', 'total_distance', 'average_speed', 'max_speed', 'stop_duration', 'sum_top_time',
-                                                               'crosses_count', 'first_ascent_latency'])
+                                                    'crosses_count', 'first_ascent_latency'])
 
         # Outliers removing from DataFrame.
         # Outliers replaced to np.nan.
@@ -347,36 +361,28 @@ def conventional_analysis(data_path: str, group_names: list, target_path: str, m
         csv_path = os.path.join(target_path, group_name + '_parameters.csv')
         group_data_df.to_csv(csv_path)
 
+
     # Data normalization
     # The values are divided by the median of the control in their group.
-    caff_control_medians = {}
-    ninej_control_medians = {}
-    caff_control_df = pd.read_csv(os.path.join(
-        target_path, 'caff_control_parameters.csv'), index_col=0)
-    ninej_control_df = pd.read_csv(os.path.join(
-        target_path, '9j_control_parameters.csv'), index_col=0)
 
-    for param in params:
-        caff_control_medians[param] = caff_control_df[param].median()
-        ninej_control_medians[param] = ninej_control_df[param].median()
 
-    group_list = glob.glob(os.path.join(target_path, '9j*.csv'))
-    for file in tqdm(group_list):
-        df_orig = pd.read_csv(file, index_col=0)
+    for drug, groups in drugs_data.items():
+        drug_control_df = pd.read_csv(os.path.join(target_path, f'{drug}_control_parameters.csv'), index_col=0)
+        drug_control_medians = {}
         for param in params:
-            df_orig[param] = df_orig[param] / ninej_control_medians[param]
-        df_orig.to_csv(os.path.join(target_path, os.path.basename(file)))
+            drug_control_medians[param] = drug_control_df[param].median()
 
-    group_list = glob.glob(os.path.join(target_path, 'caff*.csv'))
-    for file in tqdm(group_list):
-        df_orig = pd.read_csv(file, index_col=0)
-        for param in params:
-            df_orig[param] = df_orig[param] / caff_control_medians[param]
-        df_orig.to_csv(os.path.join(target_path, os.path.basename(file)))
 
-    csv_paths = list(set(glob.glob(os.path.join(target_path, '*_parameters.csv'))) - set(glob.glob(os.path.join(target_path, 'model*_parameters.csv'))))
-    csv_paths.sort(reverse=True)
-    csv_paths[0], csv_paths[1], csv_paths[2], csv_paths[3], csv_paths[4], csv_paths[5] = csv_paths[3], csv_paths[4], csv_paths[5], csv_paths[0], csv_paths[1], csv_paths[2]
+        for group_name in tqdm(groups.keys()):
+            group_control_file_path = os.path.join(target_path, f'{drug}_{group_name}_parameters.csv')
+            df_orig = pd.read_csv(group_control_file_path, index_col=0)
+            for param in params:
+                df_orig[param] = df_orig[param] / drug_control_medians[param]
+            df_orig.to_csv(os.path.join(target_path, os.path.basename(group_control_file_path)))
+
+
+    #csv_paths = list(set(glob.glob(os.path.join(target_path, '*_parameters.csv'))) - set(glob.glob(os.path.join(target_path, 'model*_parameters.csv'))))
+
 
     visual_target_path = os.path.join(os.getcwd(), 'data', 'original', 'visualization')
     os.makedirs(visual_target_path, exist_ok=True)
@@ -386,47 +392,32 @@ def conventional_analysis(data_path: str, group_names: list, target_path: str, m
 
     for ncol, col in enumerate(columns):
         df = pd.DataFrame(columns=['value', 'parameter', 'group', 'drug'])
-        for csv_count, csv_path in enumerate(csv_paths):
-            if csv_count == 0:
-                csv_name = os.path.basename(csv_path)
-                parametrs_df = pd.read_csv(csv_path, index_col=0).drop(['video_name'], axis=1)
-                group = csv_name.replace('_parameters.csv', '').replace('9j_100mg', '++').replace('9j_1mg', '+').replace('9j_control', '0').replace('caff_control', '0').replace('caff_50mg', '+').replace('caff_100mg', '++')
-                if csv_name.split('_')[0] == '9j':
-                    drug = csv_name.split('_')[0]
-                else:
-                    drug = csv_name.split('_')[0]+'eine'
-                for i in range(0, parametrs_df.shape[0]):
-                        new_row = {'value': parametrs_df[col][i], 'parameter':col, 'group':group, 'drug':drug}
-                        df = df.append(new_row, ignore_index=True)
-            else:
-                csv_name = os.path.basename(csv_path)
-                new_parametrs_df = pd.read_csv(csv_path, index_col=0).drop(['video_name'], axis=1)
-                new_parametrs_df['group']=csv_name.replace('_parameters.csv', '')
-                group = csv_name.replace('_parameters.csv', '').replace('9j_100mg', '++').replace('9j_1mg', '+').replace('9j_control', '0').replace('caff_control', '0').replace('caff_50mg', '+').replace('caff_100mg', '++')
-                if csv_name.split('_')[0] == '9j':
-                    drug = csv_name.split('_')[0]
-                else:
-                    drug = csv_name.split('_')[0]+'eine'
+        for csv_count, group_name in enumerate(files_by_groups.keys()):
+            csv_path = os.path.join(target_path, f'{group_name}_parameters.csv')
+            csv_name = os.path.basename(csv_path)
+            group = groups_extents[group_name]
+            if group:
+                group = '+'*group
 
+            drug = csv_name.split('_')[0]
+            if csv_count == 0:
+                parametrs_df = pd.read_csv(csv_path, index_col=0).drop(['video_name'], axis=1)
+                for i in range(0, parametrs_df.shape[0]):
+                        new_row = {'value':parametrs_df[col][i], 'parameter':col, 'group':group, 'drug':drug}
+                        df = df.append(new_row, ignore_index=True)
+
+            else:
+                new_parametrs_df = pd.read_csv(csv_path, index_col=0).drop(['video_name'], axis=1)
+                new_parametrs_df['group'] = group_name
+                drug = csv_name.split('_')[0]
                 parametrs_df = pd.concat([new_parametrs_df, parametrs_df], ignore_index=True)
-                for i in range(0, new_parametrs_df.shape[0]):
+                for i in range(0,new_parametrs_df.shape[0]):
                         new_row = {'value':new_parametrs_df[col][i], 'parameter':col, 'group':group,  'drug':drug}
                         df = df.append(new_row, ignore_index=True)
 
-        sns.set(font_scale=1.5, style='whitegrid')
-        g = sns.catplot(x="group",
-                        y="value",
-                        hue="drug",
-                        col = 'drug',
-                        data=df,
-                        kind="box",
-                        width=0.7,
-                        height=6,
-                        showfliers=False,
-                        aspect=.5,
-                        palette=sns.color_palette('viridis', n_colors=2), dodge=False)
-
-        g.set(xlabel=' ', ylabel='Fold of control')
+        sns.set(font_scale =1.5, style='whitegrid')
+        g = sns.catplot(x="group", y="value", hue="drug", col = 'drug', data=df, kind="box", width=0.7, height=6, showfliers = False, aspect=.5, palette=sns.color_palette('viridis', n_colors=2), dodge=False)
+        g.set(xlabel = ' ', ylabel = 'Fold of control')
         if ncol == 6:
             g.set(yscale="log")
         g.set_titles("{col_name}")
@@ -469,7 +460,7 @@ def get_statistics_model(data_file: str, min_len: int, fps: float = 25, base: fl
     S = []
     for degree in range(int(math.log2(smin)/math.log2(base)), int(math.log2(smax)/math.log2(base))):
         new = int(base**degree)
-        if new not in S:
+        if not new in S:
             S.append(new)
     px, rx, fx, sx = dpcca(data['x'], pd=2, step=1, s=S, processes=2)
     new_f = fx*np.power(sx, -3/2)

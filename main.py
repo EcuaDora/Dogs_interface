@@ -1,9 +1,13 @@
-from PyQt5 import QtWidgets, uic, QtCore, QtGui
-import sys
 import os
-from qt_tools.validate_csv_file import validate_csv
-from qt_tools.messages import *
+import sys
 from itertools import count
+import math
+
+import matplotlib.pyplot as plt
+from PyQt5 import QtCore, QtGui, QtWidgets, uic
+
+from qt_tools.messages import *
+from qt_tools.validate_csv_file import validate_csv
 
 # To Do:
 # 1. Если не выбран анализ и нажата кнопка готов, то ничего не делать, а вывести в окне для сообщений "Выбери тип анализа"
@@ -23,6 +27,7 @@ analysis_types = {
 FIRST_WINDOW_PATH = os.path.join('interfaces', 'first_window.ui')
 SECOND_WINDOW_PATH = os.path.join('interfaces', 'second_window.ui')
 
+flag = 0
 
 class Ui(QtWidgets.QMainWindow):
     def __init__(self):
@@ -131,17 +136,94 @@ class Ui(QtWidgets.QMainWindow):
                 self.chosen_flies.remove(item.text())
                 self.update_files_amount_label()
 
-class Ui_Dialog(QtWidgets.QDialog):
-        def __init__(self):
-            super(Ui_Dialog, self).__init__()
-            uic.loadUi(SECOND_WINDOW_PATH, self)
+class Ui_Dialog(QtWidgets.QDialog ):
+    def __init__(self):
+        super(Ui_Dialog, self).__init__()
+        uic.loadUi(SECOND_WINDOW_PATH, self)
+       
         # нужно по клику на кнопку ready из главного окна сделать:
            #1. Открыть второе окно
            #2. Отрисовать картинки 
            #3. По окончании поменять текст в сообщении 
-           
+        self.graphicsView = self.findChild(QtWidgets.QGraphicsView, 'graphicsView')
+        self.textBrowser = self.findChild(QtWidgets.QTextBrowser, 'textBrowser') 
+        self.label = self.findChild(QtWidgets.QLabel, 'label')
+        self.setFixedSize(1200, 800)
+        self.initUI()
+        self.setWindowTitle('Analysis results')
+    
+    
+        
+    def initUI(self):
+        
+        
+        scr = QtWidgets.QScrollArea(self)
+        scr.setFixedSize(1200, 730)
+        scr.move(0, 70)
+        pnl = QtWidgets.QDialog(self)
+        
+        vbox = QtWidgets.QGridLayout(self)
+        images = os.listdir('photos') 
+        amount = len(images)
+        
+        j = 1
+        k = 1
+        n = 4 #количество картинок в строке
+        
+        
+  
+        for i in range(amount):
             
-          
+            pxm_path = os.path.join('photos', images[i])
+            
+            lbl = QtWidgets.QLabel()
+            self.pxm = QtGui.QPixmap(pxm_path)
+            
+   
+            lbl.setBackgroundRole(QtGui.QPalette.Dark)
+            lbl.setScaledContents(1)
+            lbl.setPixmap(self.pxm)
+            
+            lbl.mousePressEvent = self.zoom
+            
+            pixWidth = float(self.pxm.width())
+            
+            grid_Width  = float(scr.geometry().width())
+            factor = float(pixWidth * 2.05/grid_Width)
+            lbl.setFixedWidth(int(factor * self.pxm.width()))
+            lbl.setFixedHeight(int(factor * self.pxm.height()))
+            
+
+            #тк i = [0 1 2 ... amount - 1], введем доп переменную p
+            p = i + 1
+            
+            if p % n == 0 :
+                vbox.addWidget(lbl, j, k)
+                j = j + 1
+                k = 0
+            else: 
+                vbox.addWidget(lbl, j, k)
+                
+            k = k + 1
+            
+        pnl.setLayout(vbox)
+        scr.setWidget(pnl)
+        self.show()
+    
+       
+     
+    def zoom(self, event):
+        if flag == 0:
+            print ('Label click')
+            flag == 1
+       
+        
+    
+                  
+        
+     
+
+      
 
 class MyWin(QtWidgets.QMainWindow):
     def __init__(self):
@@ -158,13 +240,15 @@ class MyWin(QtWidgets.QMainWindow):
         self.w2 = Ui_Dialog()
         self.w2.show()
  
-    
+ 
+   
 def main():
     app = QtWidgets.QApplication(sys.argv)
-    w = MyWin()
-    w.show_window_1()
+    w = Ui()
+   
     sys.exit(app.exec_())
-
+        
 
 if __name__ == '__main__':
     main()
+    

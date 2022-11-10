@@ -1,143 +1,91 @@
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+import numpy as np
+
+import pyqtgraph as pg
+from pyqtgraph.Qt import QtCore
+
+app = pg.mkQApp("Plotting Example")
+#mw = QtWidgets.QMainWindow()
+#mw.resize(800,800)
+
+win = pg.GraphicsLayoutWidget(show=True, title="Basic plotting examples")
+win.resize(1000,600)
+win.setWindowTitle('pyqtgraph example: Plotting')
+
+# Enable antialiasing for prettier plots
+pg.setConfigOptions(antialias=True)
+
+p1 = win.addPlot(title="Basic array plotting", y=np.random.normal(size=100))
+
+p2 = win.addPlot(title="Multiple curves")
+p2.plot(np.random.normal(size=100), pen=(255,0,0), name="Red curve")
+p2.plot(np.random.normal(size=110)+5, pen=(0,255,0), name="Green curve")
+p2.plot(np.random.normal(size=120)+10, pen=(0,0,255), name="Blue curve")
+
+p3 = win.addPlot(title="Drawing with points")
+p3.plot(np.random.normal(size=100), pen=(200,200,200), symbolBrush=(255,0,0), symbolPen='w')
 
 
-class Ui_Dialog(object):
-    def setupUi(self, Dialog):
-        Dialog.setObjectName("Dialog")
-        Dialog.resize(1136, 740)
-        self.verticalLayoutWidget = QtWidgets.QWidget(Dialog)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(-1, -1, 1141, 741))
-        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.stackedWidget = QtWidgets.QStackedWidget(self.verticalLayoutWidget)
-        self.stackedWidget.setStyleSheet("background-color: rgb(5, 51, 110);")
-        self.stackedWidget.setObjectName("stackedWidget")
-        self.page = QtWidgets.QWidget()
-        self.page.setObjectName("page")
-        self.label_2 = QtWidgets.QLabel(self.page)
-        self.label_2.setGeometry(QtCore.QRect(0, 0, 1141, 41))
-        self.label_2.setStyleSheet("background-color: rgb(88, 129, 183);")
-        self.label_2.setText("")
-        self.label_2.setObjectName("label_2")
-        self.gridLayoutWidget = QtWidgets.QWidget(self.page)
-        self.gridLayoutWidget.setGeometry(QtCore.QRect(20, 90, 1091, 601))
-        self.gridLayoutWidget.setObjectName("gridLayoutWidget")
-        self.gridLayout = QtWidgets.QGridLayout(self.gridLayoutWidget)
-        self.gridLayout.setContentsMargins(0, 0, 0, 0)
-        self.gridLayout.setObjectName("gridLayout")
-        self.graphicsView_2 = QtWidgets.QGraphicsView(self.gridLayoutWidget)
-        self.graphicsView_2.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.graphicsView_2.setObjectName("graphicsView_2")
-        self.gridLayout.addWidget(self.graphicsView_2, 0, 7, 1, 1)
-        self.graphicsView = QtWidgets.QGraphicsView(self.gridLayoutWidget)
-        self.graphicsView.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.graphicsView.setObjectName("graphicsView")
-        self.gridLayout.addWidget(self.graphicsView, 1, 7, 1, 1)
-        self.graphicsView_5 = QtWidgets.QGraphicsView(self.gridLayoutWidget)
-        self.graphicsView_5.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.graphicsView_5.setObjectName("graphicsView_5")
-        self.gridLayout.addWidget(self.graphicsView_5, 0, 6, 1, 1)
-        self.graphicsView_6 = QtWidgets.QGraphicsView(self.gridLayoutWidget)
-        self.graphicsView_6.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.graphicsView_6.setObjectName("graphicsView_6")
-        self.gridLayout.addWidget(self.graphicsView_6, 1, 4, 1, 1)
-        self.graphicsView_3 = QtWidgets.QGraphicsView(self.gridLayoutWidget)
-        self.graphicsView_3.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.graphicsView_3.setObjectName("graphicsView_3")
-        self.gridLayout.addWidget(self.graphicsView_3, 1, 3, 1, 1)
-        self.graphicsView_4 = QtWidgets.QGraphicsView(self.gridLayoutWidget)
-        self.graphicsView_4.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.graphicsView_4.setObjectName("graphicsView_4")
-        self.gridLayout.addWidget(self.graphicsView_4, 1, 6, 1, 1)
-        self.graphicsView_8 = QtWidgets.QGraphicsView(self.gridLayoutWidget)
-        self.graphicsView_8.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.graphicsView_8.setObjectName("graphicsView_8")
-        self.gridLayout.addWidget(self.graphicsView_8, 0, 4, 1, 1)
-        self.graphicsView_7 = QtWidgets.QGraphicsView(self.gridLayoutWidget)
-        self.graphicsView_7.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.graphicsView_7.setObjectName("graphicsView_7")
-        self.gridLayout.addWidget(self.graphicsView_7, 0, 3, 1, 1)
-        self.label_3 = QtWidgets.QLabel(self.page)
-        self.label_3.setGeometry(QtCore.QRect(30, 10, 121, 21))
-        font = QtGui.QFont()
-        font.setFamily("Cantarell")
-        font.setPointSize(14)
-        font.setBold(True)
-        font.setWeight(75)
-        self.label_3.setFont(font)
-        self.label_3.setStyleSheet("color: rgb(255, 255, 255);\n"
-"background-color: rgb(88, 129, 183);")
-        self.label_3.setObjectName("label_3")
-        self.stackedWidget.addWidget(self.page)
-        self.page_2 = QtWidgets.QWidget()
-        self.page_2.setObjectName("page_2")
-        self.label = QtWidgets.QLabel(self.page_2)
-        self.label.setGeometry(QtCore.QRect(0, 0, 1141, 41))
-        self.label.setStyleSheet("\n"
-"background-color: rgb(88, 129, 183);")
-        self.label.setText("")
-        self.label.setObjectName("label")
-        self.gridLayoutWidget_2 = QtWidgets.QWidget(self.page_2)
-        self.gridLayoutWidget_2.setGeometry(QtCore.QRect(20, 90, 1091, 601))
-        self.gridLayoutWidget_2.setObjectName("gridLayoutWidget_2")
-        self.gridLayout_2 = QtWidgets.QGridLayout(self.gridLayoutWidget_2)
-        self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.gridLayout_2.setObjectName("gridLayout_2")
-        self.graphicsView_9 = QtWidgets.QGraphicsView(self.gridLayoutWidget_2)
-        self.graphicsView_9.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.graphicsView_9.setObjectName("graphicsView_9")
-        self.gridLayout_2.addWidget(self.graphicsView_9, 0, 7, 1, 1)
-        self.graphicsView_10 = QtWidgets.QGraphicsView(self.gridLayoutWidget_2)
-        self.graphicsView_10.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.graphicsView_10.setObjectName("graphicsView_10")
-        self.gridLayout_2.addWidget(self.graphicsView_10, 1, 7, 1, 1)
-        self.graphicsView_11 = QtWidgets.QGraphicsView(self.gridLayoutWidget_2)
-        self.graphicsView_11.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.graphicsView_11.setObjectName("graphicsView_11")
-        self.gridLayout_2.addWidget(self.graphicsView_11, 0, 6, 1, 1)
-        self.graphicsView_12 = QtWidgets.QGraphicsView(self.gridLayoutWidget_2)
-        self.graphicsView_12.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.graphicsView_12.setObjectName("graphicsView_12")
-        self.gridLayout_2.addWidget(self.graphicsView_12, 1, 4, 1, 1)
-        self.graphicsView_13 = QtWidgets.QGraphicsView(self.gridLayoutWidget_2)
-        self.graphicsView_13.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.graphicsView_13.setObjectName("graphicsView_13")
-        self.gridLayout_2.addWidget(self.graphicsView_13, 1, 3, 1, 1)
-        self.graphicsView_14 = QtWidgets.QGraphicsView(self.gridLayoutWidget_2)
-        self.graphicsView_14.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.graphicsView_14.setObjectName("graphicsView_14")
-        self.gridLayout_2.addWidget(self.graphicsView_14, 1, 6, 1, 1)
-        self.graphicsView_15 = QtWidgets.QGraphicsView(self.gridLayoutWidget_2)
-        self.graphicsView_15.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.graphicsView_15.setObjectName("graphicsView_15")
-        self.gridLayout_2.addWidget(self.graphicsView_15, 0, 4, 1, 1)
-        self.graphicsView_16 = QtWidgets.QGraphicsView(self.gridLayoutWidget_2)
-        self.graphicsView_16.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.graphicsView_16.setObjectName("graphicsView_16")
-        self.gridLayout_2.addWidget(self.graphicsView_16, 0, 3, 1, 1)
-        self.label_4 = QtWidgets.QLabel(self.page_2)
-        self.label_4.setGeometry(QtCore.QRect(30, 10, 161, 21))
-        font = QtGui.QFont()
-        font.setFamily("Cantarell")
-        font.setPointSize(14)
-        font.setBold(True)
-        font.setWeight(75)
-        self.label_4.setFont(font)
-        self.label_4.setStyleSheet("color: rgb(255, 255, 255);\n"
-"background-color: rgb(88, 129, 183);")
-        self.label_4.setObjectName("label_4")
-        self.stackedWidget.addWidget(self.page_2)
-        self.verticalLayout.addWidget(self.stackedWidget)
+win.nextRow()
 
-        self.retranslateUi(Dialog)
-        self.stackedWidget.setCurrentIndex(1)
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
+p4 = win.addPlot(title="Parametric, grid enabled")
+x = np.cos(np.linspace(0, 2*np.pi, 1000))
+y = np.sin(np.linspace(0, 4*np.pi, 1000))
+p4.plot(x, y)
+p4.showGrid(x=True, y=True)
 
-    def retranslateUi(self, Dialog):
-        _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
-        self.label_3.setText(_translate("Dialog", "1 страница"))
-        self.label_4.setText(_translate("Dialog", "Analysis Results"))
+p5 = win.addPlot(title="Scatter plot, axis labels, log scale")
+x = np.random.normal(size=1000) * 1e-5
+y = x*1000 + 0.005 * np.random.normal(size=1000)
+y -= y.min()-1.0
+mask = x > 1e-15
+x = x[mask]
+y = y[mask]
+p5.plot(x, y, pen=None, symbol='t', symbolPen=None, symbolSize=10, symbolBrush=(100, 100, 255, 50))
+p5.setLabel('left', "Y Axis", units='A')
+p5.setLabel('bottom', "Y Axis", units='s')
+p5.setLogMode(x=True, y=False)
+
+p6 = win.addPlot(title="Updating plot")
+curve = p6.plot(pen='y')
+data = np.random.normal(size=(10,1000))
+ptr = 0
+def update():
+    global curve, data, ptr, p6
+    curve.setData(data[ptr%10])
+    if ptr == 0:
+        p6.enableAutoRange('xy', False)  ## stop auto-scaling after the first data set is plotted
+    ptr += 1
+timer = QtCore.QTimer()
+timer.timeout.connect(update)
+timer.start(50)
+
+
+win.nextRow()
+
+p7 = win.addPlot(title="Filled plot, axis disabled")
+y = np.sin(np.linspace(0, 10, 1000)) + np.random.normal(size=1000, scale=0.1)
+p7.plot(y, fillLevel=-0.3, brush=(50,50,200,100))
+p7.showAxis('bottom', False)
+
+
+x2 = np.linspace(-100, 100, 1000)
+data2 = np.sin(x2) / x2
+p8 = win.addPlot(title="Region Selection")
+p8.plot(data2, pen=(255,255,255,200))
+lr = pg.LinearRegionItem([400,700])
+lr.setZValue(-10)
+p8.addItem(lr)
+
+p9 = win.addPlot(title="Zoom on selected region")
+p9.plot(data2)
+def updatePlot():
+    p9.setXRange(*lr.getRegion(), padding=0)
+def updateRegion():
+    lr.setRegion(p9.getViewBox().viewRange()[0])
+lr.sigRegionChanged.connect(updatePlot)
+p9.sigXRangeChanged.connect(updateRegion)
+updatePlot()
+
+if __name__ == '__main__':
+    pg.exec()

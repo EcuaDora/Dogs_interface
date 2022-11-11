@@ -2,12 +2,12 @@ import os
 import sys
 from itertools import count
 import math
-
+from pprint import pprint
 import matplotlib.pyplot as plt
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 
 from qt_tools.messages import *
-from qt_tools.validate_csv_file import validate_csv
+from qt_tools.validate_csv_file import validate_csv, check_files_names
 
 # To Do:
 # 1. Если не выбран анализ и нажата кнопка готов, то ничего не делать, а вывести в окне для сообщений "Выбери тип анализа"
@@ -27,13 +27,15 @@ analysis_types = {
 FIRST_WINDOW_PATH = os.path.join('interfaces', 'first_window.ui')
 SECOND_WINDOW_PATH = os.path.join('interfaces', 'second_window.ui')
 
+DEFAULT_DRUGS = ['9j', 'caff']
 flag = 0
 
 class Ui(QtWidgets.QMainWindow):
     def __init__(self):
         super(Ui, self).__init__()
         uic.loadUi(FIRST_WINDOW_PATH, self)
-        
+
+
 
         self.confirm_button = self.findChild(QtWidgets.QPushButton, 'PushButtonConfirm')
         self.confirm_button.clicked.connect(self.confirm_button_pressed)
@@ -41,17 +43,23 @@ class Ui(QtWidgets.QMainWindow):
         self.add_file_button = self.findChild(QtWidgets.QPushButton, 'AddFile')
         self.add_file_button.clicked.connect(self.add_file_to_list)
 
+        self.drug_chooser = self.findChild(QtWidgets.QComboBox, 'DrugsChooser')
+        self.drug_chooser.addItems(DEFAULT_DRUGS)
+        self.drug_chooser.currentTextChanged.connect(self.update_files_list)
+        self.chosen_drug = self.drug_chooser.currentText()
+        self.drugs_files = {drug: {} for drug in DEFAULT_DRUGS}
+        self.files_by_visualized_names = {}
 
-        self.accpept_file = self.findChild(QtWidgets.QDialogButtonBox, 'AccpeptFile')
-        self.accpept_file.accepted.connect(self.accept_file_button_pressed)
-        self.accpept_file.rejected.connect(self.reject_file_button_pressed)
+        self.add_drug_button = self.findChild(QtWidgets.QPushButton, 'AddDrug')
+        self.add_drug_button.clicked.connect(self.add_drug)
+        self.new_drug_input_line = self.findChild(QtWidgets.QLineEdit, 'NewDrugInput')
+
+#        self.accpept_file = self.findChild(QtWidgets.QDialogButtonBox, 'AccpeptFile')
+#        self.accpept_file.accepted.connect(self.accept_file_button_pressed)
+#        self.accpept_file.rejected.connect(self.reject_file_button_pressed)
 
 
         self.chosen_flies_label = self.findChild(QtWidgets.QLabel, 'ChosenFilesLabel')
-
-        self.chosen_flies = []
-
-        self.file_search_line = self.findChild(QtWidgets.QLineEdit, 'FileSearchLineEdit')
 
         self.files_list = self.findChild(QtWidgets.QListWidget, 'FilesList')
         self.files_list.itemDoubleClicked.connect(self.remove_file_from_list)
@@ -77,17 +85,46 @@ class Ui(QtWidgets.QMainWindow):
 
         self.show()
 
-
     def send_user_message(self, message, font_size = 10):
         self.message_text_field.clear()
         self.message_text_field.setAlignment(QtCore.Qt.AlignCenter)
         self.message_text_field.setFont(QtGui.QFont('MS Shell Dlg 2', font_size))
         self.message_text_field.insertPlainText(message)
 
+    def add_drug(self):
+        new_drug_name = self.new_drug_input_line.text()
+        if not new_drug_name:
+            return
+        if new_drug_name in self.drugs_files.keys():
+            self.send_user_message(drug_already_exist_error_string)
+            return
+
+        self.drugs_files[new_drug_name] = {}
+        self.drug_chooser.addItem(new_drug_name)
+        self.new_drug_input_line.clear()
+        self.drug_chooser.setCurrentIndex(self.drug_chooser.count()-1)
 
     def update_files_amount_label(self):
-        chosen_files_label = get_chosen_files_label(len(self.chosen_flies))
+        chosen_files_label = get_chosen_files_label(len(self.drugs_files[self.chosen_drug]))
         self.chosen_flies_label.setText(chosen_files_label)
+
+    def update_files_list(self):
+        self.files_list.clear()
+        current_drug = self.drug_chooser.currentText()
+        drug_files = self.drugs_files[current_drug]
+        for group_name, group_files in drug_files.items():
+            QtWidgets.QListWidgetItem(group_name, self.files_list)
+            for file_name in group_files:
+                if len(file_name) > 30:
+                    truncated_file_name = file_name[-30:]
+                    list_item_label = f"   📄 ...{truncated_file_name}"
+                else:
+                    list_item_label = f"   📄 {file_name}"
+
+                QtWidgets.QListWidgetItem(list_item_label, self.files_list)
+                self.files_by_visualized_names[list_item_label] = file_name
+
+       # pprint(self.files_by_visualized_names)
 
     def change_analysis_type(self, button):
         self.analysis_type = button.toolTip()
@@ -96,45 +133,45 @@ class Ui(QtWidgets.QMainWindow):
     def confirm_button_pressed(self):
         self.send_user_message(f'Идет анализ типа {analysis_types.get(self.analysis_type)}')
 
-
-    def accept_file_button_pressed(self):
-        file_path = self.file_search_line.text()
-        validation_result = validate_csv(file_path)
-
-        if validation_result:
-            self.send_user_message(validation_result)
-            return
-
-        if file_path in self.chosen_flies:
-            self.send_user_message(file_already_added_error_string)
-            return
-
-
-        self.chosen_flies.append(file_path)
-        self.f = QtWidgets.QListWidgetItem(file_path, self.files_list)
-        self.update_files_amount_label()
-        self.send_user_message(file_added_success_string)
-
-    def reject_file_button_pressed(self):
-        self.file_search_line.clear()
-
     def add_file_to_list(self):
-        file_path, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Открыть файл', '.', 'SCV File (*.csv)')
-        self.file_search_line.clear()
-        self.file_search_line.insert(file_path)
+        current_drug = self.drug_chooser.currentText()
+        file_paths, _ = QtWidgets.QFileDialog.getOpenFileNames(self, 'Открыть файл', '.', 'SCV File (*.csv)')
+        files_names_check_result = check_files_names(file_paths, current_drug)
+        if type(files_names_check_result) == str:
+            self.send_user_message(files_names_check_result)
+            return
+
+        for group_name, file_paths in files_names_check_result.items():
+            for file_path in file_paths:
+                validation_result = validate_csv(file_path)
+
+                if validation_result:
+                    self.send_user_message(validation_result)
+                    return
+
+
+        self.drugs_files[current_drug] = files_names_check_result
+        self.update_files_list()
 
 
     def remove_file_from_list(self, item):
-        for row in count():
-            list_item = self.files_list.item(row)
+        current_drug = self.drug_chooser.currentText()
+        if item.text() in self.drugs_files[current_drug].keys():
+            del self.drugs_files[current_drug][item.text()]
+            self.update_files_list()
+            return
 
-            if list_item == None:
-                break
+        file_to_remove = self.files_by_visualized_names[item.text()]
 
-            if item.text() == list_item.text():
-                self.files_list.takeItem(row)
-                self.chosen_flies.remove(item.text())
-                self.update_files_amount_label()
+        drug_group = os.path.basename(file_to_remove).split('_')[1]
+        self.drugs_files[current_drug][drug_group].remove(file_to_remove)
+        self.update_files_list()
+
+
+        # if item.text() == [list_item.text()]:
+           #     self.files_list.takeItem(row)
+                #self.chosen_flies.remove(item.text())
+                #self.update_files_amount_label()
 
 class Ui_Dialog(QtWidgets.QDialog ):
     def __init__(self):
@@ -209,8 +246,7 @@ class Ui_Dialog(QtWidgets.QDialog ):
         pnl.setLayout(vbox)
         scr.setWidget(pnl)
         self.show()
-    
-       
+
      
     def zoom(self, event):
         if flag == 0:
@@ -219,11 +255,6 @@ class Ui_Dialog(QtWidgets.QDialog ):
        
         
     
-                  
-        
-     
-
-      
 
 class MyWin(QtWidgets.QMainWindow):
     def __init__(self):
@@ -244,9 +275,11 @@ class MyWin(QtWidgets.QMainWindow):
    
 def main():
     app = QtWidgets.QApplication(sys.argv)
-    w = Ui()
-   
+    w = MyWin()
+    w.show_window_1()
     sys.exit(app.exec_())
+   
+    #sys.exit(app.exec_())
         
 
 if __name__ == '__main__':

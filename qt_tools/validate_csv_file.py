@@ -4,24 +4,25 @@ from itertools import count
 from .messages import *
 
 
-def does_file_exists(file_path):
-    if not os.path.isfile(file_path):
-       return file_doesnt_exist_error_string
-
-    file_expansion = os.path.splitext(file_path)[-1]
-
-    if file_expansion != '.csv':
-        return bad_extension_error_string
-
-    return False
+def check_files_names(file_paths, drug_name):
+    drug_groups = {}
+    for file_path in file_paths:
+        try:
+            file_name = os.path.basename(file_path)
+            file_drug_name, file_group_name, file_number = file_name.split('_')
+            if file_drug_name != drug_name:
+                raise Exception
+            if file_group_name in drug_groups.keys():
+                drug_groups[file_group_name].append(file_path)
+            else:
+                drug_groups[file_group_name] = [file_path]
+        except Exception:
+            return file_name_wrong_format(file_name, drug_name)
+    return drug_groups
 
 
 
 def validate_csv(file_path):
-
-    file_check = does_file_exists(file_path)
-    if file_check:
-        return file_check
 
     with open(file_path, newline='') as csv_file:
         reader = iter(csv.reader(csv_file, delimiter=',', quotechar='"'))
@@ -41,7 +42,6 @@ def validate_csv(file_path):
 
         else:
             return wrong_columns_amount_error_string
-
 
         for current_row_number in count(1):
 

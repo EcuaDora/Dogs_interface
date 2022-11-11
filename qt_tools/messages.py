@@ -8,8 +8,8 @@ def get_bad_cell_error_string(cell_number, row_number, cell_type):
 bad_extension_error_string = 'File has illegal extension'
 
 
-
-
+# Добовляемое лекарство уже существует
+drug_already_exist_error_string = 'This drug is already added!'
 
 # Файла нету ваще 
 file_doesnt_exist_error_string = 'Such file doesnt exist'
@@ -22,6 +22,11 @@ empty_file_error_string = 'File is empty'
 # Неправильное количество ячеек в строке
 def get_wrong_cells_amount_error_string(row_number):
     return f'Wrong amount of cells in string {row_number}'
+
+
+def file_name_wrong_format(file_path, drug_name):
+    return f"File {file_path} doesnt match template: {drug_name}_<group_name>_<number>.csv"
+
 
 # Неправильно количество колонок во всем файле (допустмое количество - 2 или 3)
 wrong_columns_amount_error_string = 'Wrong amount of columns in file'

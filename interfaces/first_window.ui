@@ -281,10 +281,10 @@ border: transparent;
      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600; color:#173153;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; color:#173153;&quot;&gt; Woof - Woof ! &lt;/span&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;🐶&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:8.25pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:600; color:#173153;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-weight:600; color:#173153;&quot;&gt; Woof - Woof ! &lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;🐶&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_14">
@@ -656,7 +656,7 @@ background-color: rgb(5, 51, 110);</string>
      <string>CHOOSE THE TYPE OF DRUG :</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="comboBox">
+   <widget class="QComboBox" name="DrugsChooser">
     <property name="geometry">
      <rect>
       <x>50</x>
@@ -769,28 +769,13 @@ background-color: rgb(5, 51, 110);</string>
     <property name="frame">
      <bool>false</bool>
     </property>
-    <item>
-     <property name="text">
-      <string>9j</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>caffeine</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>my type of drug</string>
-     </property>
-    </item>
    </widget>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLineEdit" name="NewDrugInput">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>100</x>
       <y>320</y>
-      <width>331</width>
+      <width>281</width>
       <height>20</height>
      </rect>
     </property>
@@ -895,7 +880,20 @@ background-color: rgb(5, 51, 110);</string>
      <bool>false</bool>
     </property>
     <property name="placeholderText">
-     <string> input your type of drug</string>
+     <string> input your drug</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="AddDrug">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>320</y>
+      <width>41</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Add</string>
     </property>
    </widget>
    <zorder>left_side_bar</zorder>
@@ -924,8 +922,9 @@ background-color: rgb(5, 51, 110);</string>
    <zorder>label_7</zorder>
    <zorder>ChosenFilesLabel</zorder>
    <zorder>label_17</zorder>
-   <zorder>comboBox</zorder>
-   <zorder>lineEdit</zorder>
+   <zorder>DrugsChooser</zorder>
+   <zorder>NewDrugInput</zorder>
+   <zorder>AddDrug</zorder>
   </widget>
  </widget>
  <resources/>

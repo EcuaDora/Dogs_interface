@@ -1,13 +1,11 @@
 import os
 import sys
-from itertools import count
-import math
-from pprint import pprint
-import matplotlib.pyplot as plt
+from StatTools.utilites import conventional_analysis
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
-
 from qt_tools.messages import *
 from qt_tools.validate_csv_file import validate_csv, check_files_names
+from pprint import pprint
+
 
 # To Do:
 # 1. Если не выбран анализ и нажата кнопка готов, то ничего не делать, а вывести в окне для сообщений "Выбери тип анализа"
@@ -28,7 +26,18 @@ FIRST_WINDOW_PATH = os.path.join('interfaces', 'first_window.ui')
 SECOND_WINDOW_PATH = os.path.join('interfaces', 'second_window.ui')
 
 DEFAULT_DRUGS = ['9j', 'caff']
+DEFAULT_DRUGS = []
 flag = 0
+
+from collections import OrderedDict
+
+
+def sort_by_groups_names(group_name):
+    if group_name == 'control':
+        return - 1
+
+    return int(group_name.replace('mg', ''))
+
 
 class Ui(QtWidgets.QMainWindow):
     def __init__(self):
@@ -39,6 +48,8 @@ class Ui(QtWidgets.QMainWindow):
 
         self.confirm_button = self.findChild(QtWidgets.QPushButton, 'PushButtonConfirm')
         self.confirm_button.clicked.connect(self.confirm_button_pressed)
+
+        self.ready_for_2_window = self.findChild(QtWidgets.QPushButton, 'CrunchButton') # Костыльное решение для отправки сигнала о том что все гуд и можно открывать 2ое окно
 
         self.add_file_button = self.findChild(QtWidgets.QPushButton, 'AddFile')
         self.add_file_button.clicked.connect(self.add_file_to_list)
@@ -85,7 +96,8 @@ class Ui(QtWidgets.QMainWindow):
 
         self.show()
 
-    def send_user_message(self, message, font_size = 10):
+
+    def send_user_message(self, message, font_size=10):
         self.message_text_field.clear()
         self.message_text_field.setAlignment(QtCore.Qt.AlignCenter)
         self.message_text_field.setFont(QtGui.QFont('MS Shell Dlg 2', font_size))
@@ -105,6 +117,9 @@ class Ui(QtWidgets.QMainWindow):
         self.drug_chooser.setCurrentIndex(self.drug_chooser.count()-1)
 
     def update_files_amount_label(self):
+        print(self.drug_chooser.currentText())
+        if not self.drug_chooser.currentText():
+            return
         chosen_files_label = get_chosen_files_label(len(self.drugs_files[self.chosen_drug]))
         self.chosen_flies_label.setText(chosen_files_label)
 
@@ -124,14 +139,29 @@ class Ui(QtWidgets.QMainWindow):
                 QtWidgets.QListWidgetItem(list_item_label, self.files_list)
                 self.files_by_visualized_names[list_item_label] = file_name
 
-       # pprint(self.files_by_visualized_names)
 
     def change_analysis_type(self, button):
         self.analysis_type = button.toolTip()
 
 
     def confirm_button_pressed(self):
-        self.send_user_message(f'Идет анализ типа {analysis_types.get(self.analysis_type)}')
+        pprint(self.drugs_files)
+        drugs_data = {}
+        for drug_name, drug_groups in self.drugs_files.items():
+            if 'control' not in drug_groups.keys():
+                self.send_user_message(drug_doesnt_have_control_group(drug_name))
+                continue
+
+            self.send_user_message(f'Идет анализ типа {analysis_types.get(self.analysis_type)}')
+            data_path = os.path.join('data', 'original', 'trajectories')
+            target_path = os.path.join('data', 'original', 'parameters')
+            os.makedirs(target_path, exist_ok=True)
+
+
+
+        self.ready_for_2_window.clicked.emit()
+
+
 
     def add_file_to_list(self):
         current_drug = self.drug_chooser.currentText()
@@ -167,11 +197,6 @@ class Ui(QtWidgets.QMainWindow):
         self.drugs_files[current_drug][drug_group].remove(file_to_remove)
         self.update_files_list()
 
-
-        # if item.text() == [list_item.text()]:
-           #     self.files_list.takeItem(row)
-                #self.chosen_flies.remove(item.text())
-                #self.update_files_amount_label()
 
 class Ui_Dialog(QtWidgets.QDialog ):
     def __init__(self):
@@ -263,8 +288,8 @@ class MyWin(QtWidgets.QMainWindow):
     def show_window_1(self):
         self.w1 = Ui()
         
-        self.w1.confirm_button.clicked.connect(self.show_window_2)
-        self.w1.confirm_button.clicked.connect(self.w1.close)
+        self.w1.ready_for_2_window.clicked.connect(self.show_window_2)
+        self.w1.ready_for_2_window.clicked.connect(self.w1.close)
         self.w1.show()
     
     def show_window_2(self):

@@ -27,6 +27,8 @@ def get_wrong_cells_amount_error_string(row_number):
 def file_name_wrong_format(file_path, drug_name):
     return f"File {file_path} doesnt match template: {drug_name}_<group_name>_<number>.csv"
 
+def drug_doesnt_have_control_group(drug):
+    return f"Drug {drug} doesnt have control group"
 
 # Неправильно количество колонок во всем файле (допустмое количество - 2 или 3)
 wrong_columns_amount_error_string = 'Wrong amount of columns in file'

@@ -896,6 +896,25 @@ background-color: rgb(5, 51, 110);</string>
      <string>Add</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="CrunchButton">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>16</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
+    </property>
+   </widget>
    <zorder>left_side_bar</zorder>
    <zorder>AnalysisType1</zorder>
    <zorder>AnalysisType2</zorder>
@@ -925,6 +944,7 @@ background-color: rgb(5, 51, 110);</string>
    <zorder>DrugsChooser</zorder>
    <zorder>NewDrugInput</zorder>
    <zorder>AddDrug</zorder>
+   <zorder>CrunchButton</zorder>
   </widget>
  </widget>
  <resources/>

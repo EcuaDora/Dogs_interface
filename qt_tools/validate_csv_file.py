@@ -13,11 +13,12 @@ def check_files_names(file_paths, drug_name):
             if file_drug_name != drug_name:
                 raise Exception
             if file_group_name in drug_groups.keys():
-                drug_groups[file_group_name].append(file_path)
+                drug_groups[file_group_name].add(file_path)
             else:
-                drug_groups[file_group_name] = [file_path]
+                drug_groups[file_group_name] = {file_path, }
         except Exception:
             return file_name_wrong_format(file_name, drug_name)
+
     return drug_groups
 
 

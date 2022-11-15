@@ -179,8 +179,19 @@ class Ui(QtWidgets.QMainWindow):
                     self.send_user_message(validation_result)
                     return
 
+        if current_drug not in self.drugs_files:
+            self.drugs_files[current_drug] = {}
 
-        self.drugs_files[current_drug] = files_names_check_result
+
+        for group_name, file_paths in files_names_check_result.items():
+
+            if group_name not in self.drugs_files[current_drug]:
+                self.drugs_files[current_drug][group_name] = set()
+
+            for file_path in file_paths:
+                self.drugs_files[current_drug][group_name].add(file_path)
+
+
         self.update_files_list()
 
 

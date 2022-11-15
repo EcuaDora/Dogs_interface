@@ -5,6 +5,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from qt_tools.messages import *
 from qt_tools.validate_csv_file import validate_csv, check_files_names
 from pprint import pprint
+from collections import OrderedDict
 
 
 # To Do:
@@ -96,6 +97,13 @@ class Ui(QtWidgets.QMainWindow):
 
         self.show()
 
+    @staticmethod
+    def sort_by_groups_names(group_name):
+        if group_name == 'control':
+            return - 1
+
+        return int(group_name.replace('mg', ''))
+
 
     def send_user_message(self, message, font_size=10):
         self.message_text_field.clear()
@@ -145,19 +153,32 @@ class Ui(QtWidgets.QMainWindow):
 
 
     def confirm_button_pressed(self):
-        pprint(self.drugs_files)
         drugs_data = {}
         for drug_name, drug_groups in self.drugs_files.items():
+            if not drug_name:
+                del self.drugs_files[drug_name]
+                continue
+
             if 'control' not in drug_groups.keys():
                 self.send_user_message(drug_doesnt_have_control_group(drug_name))
                 continue
 
-            self.send_user_message(f'Идет анализ типа {analysis_types.get(self.analysis_type)}')
-            data_path = os.path.join('data', 'original', 'trajectories')
-            target_path = os.path.join('data', 'original', 'parameters')
-            os.makedirs(target_path, exist_ok=True)
+            drug_data = OrderedDict(drug_groups)
+            group_names = drug_data.keys()
+            group_names = sorted(group_names, key=self.sort_by_groups_names)
+
+            for group_name in group_names:
+                drug_data.move_to_end(group_name)
+
+            drugs_data[drug_name] = drug_data
 
 
+        self.send_user_message(f'Идет анализ типа {analysis_types.get(self.analysis_type)}')
+
+        target_path = os.path.join('data', 'original', 'parameters')
+        os.makedirs(target_path, exist_ok=True)
+
+        conventional_analysis(drugs_data, target_path)
 
         self.ready_for_2_window.clicked.emit()
 

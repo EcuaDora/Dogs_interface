@@ -26,11 +26,8 @@ analysis_types = {
 FIRST_WINDOW_PATH = os.path.join('interfaces', 'first_window.ui')
 SECOND_WINDOW_PATH = os.path.join('interfaces', 'second_window.ui')
 
-DEFAULT_DRUGS = ['9j', 'caff']
-DEFAULT_DRUGS = []
-flag = 0
 
-from collections import OrderedDict
+
 
 
 def sort_by_groups_names(group_name):

@@ -1,6 +1,6 @@
 import os
 import sys
-from StatTools.utilites import conventional_analysis
+from StatToolsAlgos.utilites import conventional_analysis
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from qt_tools.messages import *
 from qt_tools.validate_csv_file import validate_csv, check_files_names
@@ -154,7 +154,9 @@ class Ui(QtWidgets.QMainWindow):
 
     def confirm_button_pressed(self):
         drugs_data = {}
+        pprint(self.drugs_files)
         for drug_name, drug_groups in self.drugs_files.items():
+            pprint(drug_groups.keys())
             if not drug_name:
                 del self.drugs_files[drug_name]
                 continue
@@ -172,7 +174,9 @@ class Ui(QtWidgets.QMainWindow):
 
             drugs_data[drug_name] = drug_data
 
-
+        if not drugs_data:
+            return
+        
         self.send_user_message(f'Идет анализ типа {analysis_types.get(self.analysis_type)}')
 
         target_path = os.path.join('data', 'original', 'parameters')
@@ -257,7 +261,8 @@ class Ui_Dialog(QtWidgets.QDialog ):
         pnl = QtWidgets.QDialog(self)
         
         vbox = QtWidgets.QGridLayout(self)
-        images = os.listdir('photos') 
+        images_dir = os.path.join('data', 'original', 'visualization')
+        images = os.listdir(images_dir)
         amount = len(images)
         
         j = 1
@@ -267,9 +272,8 @@ class Ui_Dialog(QtWidgets.QDialog ):
         
   
         for i in range(amount):
-            
-            pxm_path = os.path.join('photos', images[i])
-            
+
+            pxm_path = os.path.join(images_dir, images[i])
             lbl = QtWidgets.QLabel()
             self.pxm = QtGui.QPixmap(pxm_path)
             

@@ -1,4 +1,5 @@
 import os
+os.environ["QT_QPA_PLATFORM"] = "wayland"
 import sys
 from StatToolsAlgos.utilites import conventional_analysis
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
@@ -26,6 +27,7 @@ analysis_types = {
 FIRST_WINDOW_PATH = os.path.join('interfaces', 'first_window.ui')
 SECOND_WINDOW_PATH = os.path.join('interfaces', 'second_window.ui')
 
+DEFAULT_DRUGS = []
 
 
 
@@ -264,40 +266,52 @@ class Ui_Dialog(QtWidgets.QDialog ):
         
         j = 1
         k = 1
-        n = 4 #количество картинок в строке
-        
-        
-  
-        for i in range(amount):
+        n = 1 #количество картинок в строке
 
-            pxm_path = os.path.join(images_dir, images[i])
-            lbl = QtWidgets.QLabel()
+        for i in range(amount):
+            
+            pxm_path = os.path.join('data/original/visualization', images[i])
+            name_lbl = i
+            name_lbl = QtWidgets.QLabel()
             self.pxm = QtGui.QPixmap(pxm_path)
+            name_lbl.setScaledContents(1)
+            print('lu_0', self.pxm.width(), self.pxm.height())
             
+    
+
+            pxm_width = self.pxm.width()
+            if pxm_width > 1000: 
+                self.pxm = self.pxm.scaledToWidth(1160/2)
+            
+            elif pxm_width > 366:
+                self.pxm = self.pxm.scaledToWidth(285)
+            
+            elif pxm_width < 100:
+                self.pxm = self.pxm.scaledToWidth(285)
+
+            name_lbl.resize(self.pxm.width(), self.pxm.height())
+
+            print('lu_1', self.pxm.width(), self.pxm.height())
+            
+            
+            
+            if i == 0:
+                n = int(1180 // self.pxm.width())
+
    
-            lbl.setBackgroundRole(QtGui.QPalette.Dark)
-            lbl.setScaledContents(1)
-            lbl.setPixmap(self.pxm)
-            
-            lbl.mousePressEvent = self.zoom
-            
-            pixWidth = float(self.pxm.width())
-            
-            grid_Width  = float(scr.geometry().width())
-            factor = float(pixWidth * 2.05/grid_Width)
-            lbl.setFixedWidth(int(factor * self.pxm.width()))
-            lbl.setFixedHeight(int(factor * self.pxm.height()))
+            name_lbl.setBackgroundRole(QtGui.QPalette.Dark)
+            name_lbl.setPixmap(self.pxm)
             
 
             #тк i = [0 1 2 ... amount - 1], введем доп переменную p
             p = i + 1
             
             if p % n == 0 :
-                vbox.addWidget(lbl, j, k)
+                vbox.addWidget(name_lbl, j, k)
                 j = j + 1
                 k = 0
             else: 
-                vbox.addWidget(lbl, j, k)
+                vbox.addWidget(name_lbl, j, k)
                 
             k = k + 1
             
@@ -306,10 +320,6 @@ class Ui_Dialog(QtWidgets.QDialog ):
         self.show()
 
      
-    def zoom(self, event):
-        if flag == 0:
-            print ('Label click')
-            flag == 1
        
         
     
@@ -335,8 +345,10 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     w = MyWin()
     w.show_window_1()
+    
     sys.exit(app.exec_())
-   
+    
+    
     #sys.exit(app.exec_())
         
 

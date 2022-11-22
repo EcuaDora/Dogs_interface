@@ -34,6 +34,8 @@ def drug_doesnt_have_control_group(drug):
 wrong_columns_amount_error_string = 'Wrong amount of columns in file'
 
 
+#Не выбран тип анализа
+analysis_type_is_not_chosen = 'Choose analysis type!'
 
 
 ## Добовление файла

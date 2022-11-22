@@ -1,12 +1,15 @@
 import os
 os.environ["QT_QPA_PLATFORM"] = "wayland"
 import sys
-from StatToolsAlgos.utilites import conventional_analysis
+from StatToolsAlgos.utilites import conventional_analysis, model_analysis
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from qt_tools.messages import *
 from qt_tools.validate_csv_file import validate_csv, check_files_names
 from pprint import pprint
 from collections import OrderedDict
+from functools import partial
+import time
+
 
 
 # To Do:
@@ -29,7 +32,18 @@ SECOND_WINDOW_PATH = os.path.join('interfaces', 'second_window.ui')
 
 DEFAULT_DRUGS = []
 
+DRUGS_DATA = {}
+ANALYSIS_TYPE = None
+TARGET_PATH = None
 
+class ModelAnalysisThread(QtCore.QThread):
+    def run(self):
+        model_analysis(DRUGS_DATA, TARGET_PATH)
+
+
+class ConvAnalysisThread(QtCore.QThread):
+    def run(self):
+        conventional_analysis(DRUGS_DATA, TARGET_PATH)
 
 
 def sort_by_groups_names(group_name):
@@ -148,14 +162,23 @@ class Ui(QtWidgets.QMainWindow):
 
 
     def change_analysis_type(self, button):
+        global ANALYSIS_TYPE
         self.analysis_type = button.toolTip()
+        ANALYSIS_TYPE = self.analysis_type
 
 
     def confirm_button_pressed(self):
+        global DRUGS_DATA
+        global TARGET_PATH
+
+        analysis_type = analysis_types.get(self.analysis_type)
+        if not analysis_type:
+            self.send_user_message(analysis_type_is_not_chosen)
+            return
+
         drugs_data = {}
-        pprint(self.drugs_files)
+
         for drug_name, drug_groups in self.drugs_files.items():
-            pprint(drug_groups.keys())
             if not drug_name:
                 del self.drugs_files[drug_name]
                 continue
@@ -175,15 +198,19 @@ class Ui(QtWidgets.QMainWindow):
 
         if not drugs_data:
             return
-        
-        self.send_user_message(f'Идет анализ типа {analysis_types.get(self.analysis_type)}')
+
+
+        self.send_user_message(f'Analysis {analysis_types.get(self.analysis_type)} started, please wait')
 
         target_path = os.path.join('data', 'original', 'parameters')
         os.makedirs(target_path, exist_ok=True)
 
-        conventional_analysis(drugs_data, target_path)
+        DRUGS_DATA = drugs_data
+        TARGET_PATH = target_path
 
         self.ready_for_2_window.clicked.emit()
+
+
 
 
 
@@ -275,7 +302,7 @@ class Ui_Dialog(QtWidgets.QDialog ):
             name_lbl = QtWidgets.QLabel()
             self.pxm = QtGui.QPixmap(pxm_path)
             name_lbl.setScaledContents(1)
-            print('lu_0', self.pxm.width(), self.pxm.height())
+            #print('lu_0', self.pxm.width(), self.pxm.height())
             
     
 
@@ -291,7 +318,7 @@ class Ui_Dialog(QtWidgets.QDialog ):
 
             name_lbl.resize(self.pxm.width(), self.pxm.height())
 
-            print('lu_1', self.pxm.width(), self.pxm.height())
+            #print('lu_1', self.pxm.width(), self.pxm.height())
             
             
             
@@ -328,14 +355,28 @@ class MyWin(QtWidgets.QMainWindow):
     def __init__(self):
         super(MyWin, self).__init__()
 
+    def start_analysis(self):
+        #print(ANALYSIS_TYPE)
+
+        if ANALYSIS_TYPE == 'type_1':
+            self.thread = ConvAnalysisThread()
+            self.thread.finished.connect(self.show_window_2)
+            self.thread.start()
+
+        if ANALYSIS_TYPE == 'type_2':
+            self.thread = ModelAnalysisThread()
+            self.thread.finished.connect(self.show_window_2)
+            self.thread.start()
+
+
     def show_window_1(self):
         self.w1 = Ui()
         
-        self.w1.ready_for_2_window.clicked.connect(self.show_window_2)
-        self.w1.ready_for_2_window.clicked.connect(self.w1.close)
+        self.w1.ready_for_2_window.clicked.connect(self.start_analysis)
         self.w1.show()
     
     def show_window_2(self):
+        self.w1.close()
         self.w2 = Ui_Dialog()
         self.w2.show()
  
@@ -345,9 +386,9 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     w = MyWin()
     w.show_window_1()
-    
+
     sys.exit(app.exec_())
-    
+
     
     #sys.exit(app.exec_())
         

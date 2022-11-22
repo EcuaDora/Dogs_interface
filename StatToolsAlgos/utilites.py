@@ -478,9 +478,9 @@ def get_statistics_model(data_file: str, min_len: int, fps: float = 25, base: fl
     return data_list
 
 
-def model_analysis(data_path: str, group_names: list, target_path: str):
+def model_analysis(drugs_data: dict, target_path: str):
     """
-    Function for conventional analysis based on the estimation of multiple scalar metrics 
+    Function for conventional analysis based on the estimation of multiple scalar metrics
 
     Args:
         data_path(str): path to folder with trajectories
@@ -490,9 +490,22 @@ def model_analysis(data_path: str, group_names: list, target_path: str):
     Returns:
         saves csv file with patameters for groups to target_path
     """
+    all_files = []
+    files_by_groups = {}
+    groups_extents = {}
+
+    for drug_name, gruops in drugs_data.items():
+        extent = 0
+        for group_name, gruop_files in gruops.items():
+            files_by_groups[f'{drug_name}_{group_name}'] = gruop_files
+            groups_extents[f'{drug_name}_{group_name}'] = extent
+            all_files.extend(gruop_files)
+            extent += 1
+
     params = ['sx_max', 'sy_max']
     min_len = None
-    for csv_path in glob.glob(os.path.join(data_path, '*.csv')):
+
+    for csv_path in all_files:
         df = pd.read_csv(csv_path, index_col=0)
         df = df.dropna(axis=0, how='all')
         if min_len == None:
@@ -500,9 +513,10 @@ def model_analysis(data_path: str, group_names: list, target_path: str):
         elif df.shape[0] < min_len:
             min_len = df.shape[0]
 
-    for group_name in group_names:
+
+    for group_name, gruop_files in files_by_groups.items():
         group_data_list = []
-        for file_path in tqdm(glob.glob(os.path.join(data_path, group_name + '*.csv'))):
+        for file_path in tqdm(gruop_files):
             group_data_list.append(
                 get_statistics_model(file_path, min_len))
 
@@ -520,35 +534,25 @@ def model_analysis(data_path: str, group_names: list, target_path: str):
 
     # Data normalization
     # The values are divided by the median of the control in their group.
-    caff_control_medians = {}
-    ninej_control_medians = {}
-    caff_control_df = pd.read_csv(os.path.join(
-        target_path, 'model_caff_control_parameters.csv'), index_col=0)
-    ninej_control_df = pd.read_csv(os.path.join(
-        target_path, 'model_9j_control_parameters.csv'), index_col=0)
 
-    for param in params:
-        caff_control_medians[param] = caff_control_df[param].median()
-        ninej_control_medians[param] = ninej_control_df[param].median()
 
-    group_list = glob.glob(os.path.join(target_path, 'model_9j*.csv'))
-    for file in tqdm(group_list):
-        df_orig = pd.read_csv(file, index_col=0)
+    for drug, groups in drugs_data.items():
+        drug_control_df = pd.read_csv(os.path.join(target_path, f'model_{drug}_control_parameters.csv'), index_col=0)
+        drug_control_medians = {}
         for param in params:
-            df_orig[param + '_div_median'] = df_orig[param] / ninej_control_medians[param]
-        df_orig.to_csv(os.path.join(target_path, os.path.basename(file)))
+            drug_control_medians[param] = drug_control_df[param].median()
 
-    group_list = glob.glob(os.path.join(target_path, 'model_caff*.csv'))
-    for file in tqdm(group_list):
-        df_orig = pd.read_csv(file, index_col=0)
-        for param in params:
-            df_orig[param + '_div_median'] = df_orig[param] / caff_control_medians[param]
-        df_orig.to_csv(os.path.join(target_path, os.path.basename(file)))
+        for group_name in tqdm(groups.keys()):
+            group_control_file_path = os.path.join(target_path, f'model_{drug}_{group_name}_parameters.csv')
+            df_orig = pd.read_csv(group_control_file_path, index_col=0)
+            for param in params:
+                df_orig[param + '_div_median'] = df_orig[param] / drug_control_medians[param]
+            df_orig.to_csv(os.path.join(target_path, os.path.basename(group_control_file_path)))
 
 
-    csv_paths = glob.glob(os.path.join(target_path, 'model_*_parameters.csv'))
-    csv_paths.sort(reverse=True)
-    csv_paths[0], csv_paths[1], csv_paths[2], csv_paths[3], csv_paths[4], csv_paths[5] = csv_paths[3], csv_paths[4], csv_paths[5], csv_paths[0], csv_paths[1], csv_paths[2]
+
+    #csv_paths = glob.glob(os.path.join(target_path, 'model_*_parameters.csv'))
+
 
     visual_target_path = os.path.join(os.getcwd(), 'data', 'original', 'visualization')
     os.makedirs(visual_target_path, exist_ok=True)
@@ -558,32 +562,28 @@ def model_analysis(data_path: str, group_names: list, target_path: str):
 
     for ncol, col in enumerate(columns):
         df = pd.DataFrame(columns=['value', 'parameter', 'group', 'drug'])
-        for csv_count, csv_path in enumerate(csv_paths):
-            if csv_count == 0:
-                csv_name = os.path.basename(csv_path)
-                parametrs_df = pd.read_csv(csv_path, index_col=0).drop(['video_name'], axis=1)
-                group = csv_name.replace('_parameters.csv', '').replace('model_9j_100mg', '++').replace('model_9j_1mg', '+').replace('model_9j_control', '0').replace('model_caff_control', '0').replace('model_caff_50mg', '+').replace('model_caff_100mg', '++')
-                if csv_name.split('_')[1] == '9j':
-                    drug = '9j'
-                else:
-                    drug = 'caffeine'
-                for i in range(0,parametrs_df.shape[1]):
-                        new_row = {'value':parametrs_df[col][i], 'parameter':col, 'group':group, 'drug':drug}
-                        df = df.append(new_row, ignore_index=True)
-            else:
-                csv_name = os.path.basename(csv_path)
-                new_parametrs_df = pd.read_csv(csv_path, index_col=0).drop(['video_name'], axis=1)
-                new_parametrs_df['group']=csv_name.replace('_parameters.csv', '')
-                group = csv_name.replace('_parameters.csv', '').replace('model_9j_100mg', '++').replace('model_9j_1mg', '+').replace('model_9j_control', '0').replace('model_caff_control', '0').replace('model_caff_50mg', '+').replace('model_caff_100mg', '++')
-                if csv_name.split('_')[1] == '9j':
-                    drug = csv_name.split('_')[1]
-                else:
-                    drug = csv_name.split('_')[1]+'eine'
+        for csv_count, group_name in enumerate(files_by_groups.keys()):
+            csv_path = os.path.join(target_path, f'model_{group_name}_parameters.csv')
+            csv_name = os.path.basename(csv_path)
+            group = groups_extents[group_name]
+            if group:
+                group = '+' * group
+            drug = csv_name.split('_')[1]
 
+            if csv_count == 0:
+                parametrs_df = pd.read_csv(csv_path, index_col=0).drop(['video_name'], axis=1)
+                for i in range(0, parametrs_df.shape[1]):
+                    new_row = {'value': parametrs_df[col][i], 'parameter': col, 'group': group, 'drug': drug}
+                    df = df.append(new_row, ignore_index=True)
+
+            else:
+                new_parametrs_df = pd.read_csv(csv_path, index_col=0).drop(['video_name'], axis=1)
+                new_parametrs_df['group'] = group_name
                 parametrs_df = pd.concat([new_parametrs_df, parametrs_df], ignore_index=True)
                 for i in range(0, new_parametrs_df.shape[0]):
-                        new_row = {'value':new_parametrs_df[col][i], 'parameter':col, 'group':group,  'drug':drug}
-                        df = df.append(new_row, ignore_index=True)
+                    new_row = {'value': new_parametrs_df[col][i], 'parameter': col, 'group': group, 'drug': drug}
+                    df = df.append(new_row, ignore_index=True)
+
 
         sns.set(font_scale =1.5, style='whitegrid')
         g = sns.catplot(x="group", y="value", hue="drug", col = 'drug', data=df, kind="box", width=0.7, height=6, showfliers = False, aspect=.5, palette=sns.color_palette('viridis', n_colors=2), dodge=False)

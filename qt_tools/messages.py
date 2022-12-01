@@ -51,10 +51,8 @@ file_added_success_string  = 'File is added'
 ## Всякое другое
 
 # Приветствие
-greeting_message_string = """
-
-Woof - Woof! 🐶
-"""
+greeting_message_string = """ Woof - Woof! 🐶
+"""     
 
 
 # Строка с выбраными файлами

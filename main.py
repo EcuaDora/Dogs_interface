@@ -1,4 +1,8 @@
+from copyreg import pickle
+from mimetypes import init
 import os
+#from tkinter.messagebox import IGNORE
+#from tokenize import Ignore
 os.environ["QT_QPA_PLATFORM"] = "wayland"
 import sys
 from StatToolsAlgos.utilites import conventional_analysis, model_analysis
@@ -10,6 +14,8 @@ from collections import OrderedDict
 from functools import partial
 import time
 
+#if platform.system() == 'Linux':
+    #os.environ["QT_QPA_PLATFORM"] = "wayland"
 
 
 # To Do:
@@ -29,12 +35,15 @@ analysis_types = {
 
 FIRST_WINDOW_PATH = os.path.join('interfaces', 'first_window.ui')
 SECOND_WINDOW_PATH = os.path.join('interfaces', 'second_window.ui')
+THIRD_WINDOW_PATH = os.path.join('interfaces', 'third_window.ui')
 
 DEFAULT_DRUGS = []
 
 DRUGS_DATA = {}
 ANALYSIS_TYPE = None
 TARGET_PATH = None
+
+
 
 class ModelAnalysisThread(QtCore.QThread):
     def run(self):
@@ -59,7 +68,8 @@ class Ui(QtWidgets.QMainWindow):
         uic.loadUi(FIRST_WINDOW_PATH, self)
 
 
-
+        self.setWindowTitle('Analysis')
+        
         self.confirm_button = self.findChild(QtWidgets.QPushButton, 'PushButtonConfirm')
         self.confirm_button.clicked.connect(self.confirm_button_pressed)
 
@@ -260,31 +270,26 @@ class Ui(QtWidgets.QMainWindow):
         self.update_files_list()
 
 
-class Ui_Dialog(QtWidgets.QDialog ):
+class Ui_Dialog(QtWidgets.QDialog):
     def __init__(self):
         super(Ui_Dialog, self).__init__()
         uic.loadUi(SECOND_WINDOW_PATH, self)
-       
-        # нужно по клику на кнопку ready из главного окна сделать:
-           #1. Открыть второе окно
-           #2. Отрисовать картинки 
-           #3. По окончании поменять текст в сообщении 
         self.graphicsView = self.findChild(QtWidgets.QGraphicsView, 'graphicsView')
         self.textBrowser = self.findChild(QtWidgets.QTextBrowser, 'textBrowser') 
         self.label = self.findChild(QtWidgets.QLabel, 'label')
         self.setFixedSize(1200, 800)
+        
+      
         self.initUI()
         self.setWindowTitle('Analysis results')
-    
-    
         
     def initUI(self):
-        
         
         scr = QtWidgets.QScrollArea(self)
         scr.setFixedSize(1200, 730)
         scr.move(0, 70)
         pnl = QtWidgets.QDialog(self)
+        
         
         vbox = QtWidgets.QGridLayout(self)
         images_dir = os.path.join('data', 'original', 'visualization')
@@ -294,36 +299,47 @@ class Ui_Dialog(QtWidgets.QDialog ):
         j = 1
         k = 1
         n = 1 #количество картинок в строке
+    
+
+        
+
 
         for i in range(amount):
             
             pxm_path = os.path.join('data/original/visualization', images[i])
-            name_lbl = i
             name_lbl = QtWidgets.QLabel()
+            but = QtWidgets.QPushButton()
+            
             self.pxm = QtGui.QPixmap(pxm_path)
             name_lbl.setScaledContents(1)
-            #print('lu_0', self.pxm.width(), self.pxm.height())
-            
-    
+           
 
             pxm_width = self.pxm.width()
+
             if pxm_width > 1000: 
                 self.pxm = self.pxm.scaledToWidth(1160/2)
+                
             
             elif pxm_width > 366:
                 self.pxm = self.pxm.scaledToWidth(285)
+                
             
             elif pxm_width < 100:
                 self.pxm = self.pxm.scaledToWidth(285)
-
+                
+            
+            but.setSizePolicy(self.pxm.width(), self.pxm.height())
             name_lbl.resize(self.pxm.width(), self.pxm.height())
 
-            #print('lu_1', self.pxm.width(), self.pxm.height())
             
             
+            but.setFlat(True)
+            but.setStyleSheet("background-color: white")
+            but.setAutoFillBackground(1)
             
+    
             if i == 0:
-                n = int(1180 // self.pxm.width())
+                n = int(1140 // self.pxm.width())
 
    
             name_lbl.setBackgroundRole(QtGui.QPalette.Dark)
@@ -335,17 +351,56 @@ class Ui_Dialog(QtWidgets.QDialog ):
             
             if p % n == 0 :
                 vbox.addWidget(name_lbl, j, k)
+                vbox.addWidget(but, j, k)
                 j = j + 1
                 k = 0
             else: 
                 vbox.addWidget(name_lbl, j, k)
+                vbox.addWidget(but, j, k)
                 
             k = k + 1
-            
+
+            but.mouseDoubleClickEvent = partial(self.emit_zoom, pic = pxm_path)
+
+        
         pnl.setLayout(vbox)
         scr.setWidget(pnl)
         self.show()
 
+        
+       
+
+    def emit_zoom(self,event,pic):
+        global PIC_TO_SHOW
+        PIC_TO_SHOW = pic
+        
+        self.zoomed_window = Ui_Dialog_graphics(PIC_TO_SHOW)
+        self.zoomed_window.show()
+        
+
+
+            
+
+class Ui_Dialog_graphics(QtWidgets.QDialog):
+    def __init__(self, pic):
+        super(Ui_Dialog_graphics, self).__init__()
+        uic.loadUi(THIRD_WINDOW_PATH, self)
+        self.setWindowTitle('Zoomed graphic')
+
+        pic_path = pic
+
+        label = self.findChild(QtWidgets.QLabel, 'label')
+
+        pxm = QtGui.QPixmap(pic_path)
+        
+        
+        label.setPixmap(pxm)
+        label.resize(pxm.width(), pxm.height())
+        label.setScaledContents(1)
+        
+
+        self.setFixedSize(pxm.width()+30, pxm.height()+30)
+        
      
        
         
@@ -368,6 +423,8 @@ class MyWin(QtWidgets.QMainWindow):
             self.thread.finished.connect(self.show_window_2)
             self.thread.start()
 
+    
+
 
     def show_window_1(self):
         self.w1 = Ui()
@@ -379,6 +436,10 @@ class MyWin(QtWidgets.QMainWindow):
         self.w1.close()
         self.w2 = Ui_Dialog()
         self.w2.show()
+        
+        
+
+        
  
  
    
@@ -389,8 +450,6 @@ def main():
 
     sys.exit(app.exec_())
 
-    
-    #sys.exit(app.exec_())
         
 
 if __name__ == '__main__':

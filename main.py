@@ -1,11 +1,11 @@
 from copyreg import pickle
 from mimetypes import init
 import os
-#from tkinter.messagebox import IGNORE
-#from tokenize import Ignore
-os.environ["QT_QPA_PLATFORM"] = "wayland"
+from shutil import rmtree
+import platform
+#os.environ["QT_QPA_PLATFORM"] = "wayland"
 import sys
-from StatToolsAlgos.utilites import conventional_analysis, model_analysis
+from utilites import conventional_analysis, model_analysis
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from qt_tools.messages import *
 from qt_tools.validate_csv_file import validate_csv, check_files_names
@@ -14,8 +14,8 @@ from collections import OrderedDict
 from functools import partial
 import time
 
-#if platform.system() == 'Linux':
-    #os.environ["QT_QPA_PLATFORM"] = "wayland"
+if platform.system() == 'Linux':
+    os.environ["QT_QPA_PLATFORM"] = "wayland"
 
 
 # To Do:
@@ -41,7 +41,20 @@ DEFAULT_DRUGS = []
 
 DRUGS_DATA = {}
 ANALYSIS_TYPE = None
-TARGET_PATH = None
+TARGET_PATH = os.path.join('data', 'original', 'parameters')
+VISUAL_TARGET_PATH = os.path.join(os.getcwd(), 'data', 'original', 'visualization')
+
+try:
+    os.makedirs(TARGET_PATH)
+except FileExistsError:
+    rmtree(TARGET_PATH)
+    os.makedirs(TARGET_PATH)
+
+try:
+    os.makedirs(VISUAL_TARGET_PATH)
+except FileExistsError:
+    rmtree(VISUAL_TARGET_PATH)
+    os.makedirs(VISUAL_TARGET_PATH)
 
 
 
@@ -52,7 +65,7 @@ class ModelAnalysisThread(QtCore.QThread):
 
 class ConvAnalysisThread(QtCore.QThread):
     def run(self):
-        conventional_analysis(DRUGS_DATA, TARGET_PATH)
+        conventional_analysis(DRUGS_DATA, TARGET_PATH, VISUAL_TARGET_PATH)
 
 
 def sort_by_groups_names(group_name):
@@ -88,11 +101,6 @@ class Ui(QtWidgets.QMainWindow):
         self.add_drug_button = self.findChild(QtWidgets.QPushButton, 'AddDrug')
         self.add_drug_button.clicked.connect(self.add_drug)
         self.new_drug_input_line = self.findChild(QtWidgets.QLineEdit, 'NewDrugInput')
-
-#        self.accpept_file = self.findChild(QtWidgets.QDialogButtonBox, 'AccpeptFile')
-#        self.accpept_file.accepted.connect(self.accept_file_button_pressed)
-#        self.accpept_file.rejected.connect(self.reject_file_button_pressed)
-
 
         self.chosen_flies_label = self.findChild(QtWidgets.QLabel, 'ChosenFilesLabel')
 
@@ -179,7 +187,6 @@ class Ui(QtWidgets.QMainWindow):
 
     def confirm_button_pressed(self):
         global DRUGS_DATA
-        global TARGET_PATH
 
         analysis_type = analysis_types.get(self.analysis_type)
         if not analysis_type:
@@ -212,15 +219,9 @@ class Ui(QtWidgets.QMainWindow):
 
         self.send_user_message(f'Analysis {analysis_types.get(self.analysis_type)} started, please wait')
 
-        target_path = os.path.join('data', 'original', 'parameters')
-        os.makedirs(target_path, exist_ok=True)
-
         DRUGS_DATA = drugs_data
-        TARGET_PATH = target_path
-
+        self.confirm_button.setEnabled(False)
         self.ready_for_2_window.clicked.emit()
-
-
 
 
 
@@ -301,14 +302,11 @@ class Ui_Dialog(QtWidgets.QDialog):
         n = 1 #количество картинок в строке
     
 
-        
-
-
         for i in range(amount):
             
             pxm_path = os.path.join('data/original/visualization', images[i])
             name_lbl = QtWidgets.QLabel()
-            but = QtWidgets.QPushButton()
+           # but = QtWidgets.QPushButton()
             
             self.pxm = QtGui.QPixmap(pxm_path)
             name_lbl.setScaledContents(1)
@@ -328,14 +326,12 @@ class Ui_Dialog(QtWidgets.QDialog):
                 self.pxm = self.pxm.scaledToWidth(285)
                 
             
-            but.setSizePolicy(self.pxm.width(), self.pxm.height())
+           # but.setSizePolicy(self.pxm.width(), self.pxm.height())
             name_lbl.resize(self.pxm.width(), self.pxm.height())
 
-            
-            
-            but.setFlat(True)
-            but.setStyleSheet("background-color: white")
-            but.setAutoFillBackground(1)
+          #  but.setFlat(True)
+         #   but.setStyleSheet("background-color: white")
+         #   but.setAutoFillBackground(1)
             
     
             if i == 0:
@@ -351,24 +347,22 @@ class Ui_Dialog(QtWidgets.QDialog):
             
             if p % n == 0 :
                 vbox.addWidget(name_lbl, j, k)
-                vbox.addWidget(but, j, k)
+            #    vbox.addWidget(but, j, k)
                 j = j + 1
                 k = 0
             else: 
                 vbox.addWidget(name_lbl, j, k)
-                vbox.addWidget(but, j, k)
+             #   vbox.addWidget(but, j, k)
                 
             k = k + 1
-
-            but.mouseDoubleClickEvent = partial(self.emit_zoom, pic = pxm_path)
+            name_lbl.mousePressEvent = partial(self.emit_zoom, pic=pxm_path)
+          #  but.mouseDoubleClickEvent = partial(self.emit_zoom, pic = pxm_path)
 
         
         pnl.setLayout(vbox)
         scr.setWidget(pnl)
         self.show()
 
-        
-       
 
     def emit_zoom(self,event,pic):
         global PIC_TO_SHOW
@@ -376,10 +370,7 @@ class Ui_Dialog(QtWidgets.QDialog):
         
         self.zoomed_window = Ui_Dialog_graphics(PIC_TO_SHOW)
         self.zoomed_window.show()
-        
 
-
-            
 
 class Ui_Dialog_graphics(QtWidgets.QDialog):
     def __init__(self, pic):
@@ -401,10 +392,7 @@ class Ui_Dialog_graphics(QtWidgets.QDialog):
 
         self.setFixedSize(pxm.width()+30, pxm.height()+30)
         
-     
-       
-        
-    
+
 
 class MyWin(QtWidgets.QMainWindow):
     def __init__(self):
@@ -437,11 +425,7 @@ class MyWin(QtWidgets.QMainWindow):
         self.w2 = Ui_Dialog()
         self.w2.show()
         
-        
 
-        
- 
- 
    
 def main():
     app = QtWidgets.QApplication(sys.argv)

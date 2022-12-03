@@ -304,7 +304,7 @@ def tukeys_method(df: pd.DataFrame, variable: str, c: float = 0.25) -> list:
     return outliers
 
 
-def conventional_analysis(drugs_data: dict, target_path: str, mode: str = 'orig'):
+def conventional_analysis(drugs_data: dict, target_path: str, visual_target_path: str, mode: str = 'orig'):
     """
     Function for conventional analysis based on the estimation of multiple scalar metrics. 
     Saves csv file with patameters for groups to target_path.
@@ -383,8 +383,7 @@ def conventional_analysis(drugs_data: dict, target_path: str, mode: str = 'orig'
 
     #csv_paths = list(set(glob.glob(os.path.join(target_path, '*_parameters.csv'))) - set(glob.glob(os.path.join(target_path, 'model*_parameters.csv'))))
 
-
-    visual_target_path = os.path.join(os.getcwd(), 'data', 'original', 'visualization')
+    visual_target_path
     os.makedirs(visual_target_path, exist_ok=True)
 
     columns = ['average_speed', 'total_distance', 'stop_duration', 'crosses_count', 'max_speed', 'sum_top_time', 'first_ascent_latency']

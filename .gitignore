@@ -156,5 +156,5 @@ backend/static/*
 backend/db.sqlite3
 
 **/test.csv
- 
+/data
 

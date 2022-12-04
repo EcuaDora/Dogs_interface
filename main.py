@@ -104,6 +104,7 @@ class Ui(QtWidgets.QMainWindow):
         self.analysis_type_button_3 = self.findChild(
             QtWidgets.QRadioButton, "AnalysisType3"
         )
+        self.analysis_type_button_3.setEnabled(False)
 
         self.analysis_type = None
         self.analysis_type_buttons = QtWidgets.QButtonGroup()
@@ -145,12 +146,13 @@ class Ui(QtWidgets.QMainWindow):
         self.new_drug_input_line.clear()
         self.drug_chooser.setCurrentIndex(self.drug_chooser.count() - 1)
         self.send_user_message(drug_added_success_string)
+        self.update_files_amount_label()
 
     def update_files_amount_label(self):
         if not self.drug_chooser.currentText():
             return
         chosen_files_label = get_chosen_files_label(
-            len(self.drugs_files[self.chosen_drug])
+            self.drugs_files[self.drug_chooser.currentText()]
         )
         self.chosen_flies_label.setText(chosen_files_label)
 
@@ -185,6 +187,7 @@ class Ui(QtWidgets.QMainWindow):
         global FILES_MASKS
 
         analysis_type = analysis_types.get(self.analysis_type)
+
         if not analysis_type:
             self.send_user_message(analysis_type_is_not_chosen)
             return
@@ -210,6 +213,7 @@ class Ui(QtWidgets.QMainWindow):
             drugs_data[drug_name] = drug_data
 
         if not drugs_data:
+            self.send_user_message(no_files_error_string)
             return
 
         try:
@@ -278,6 +282,7 @@ class Ui(QtWidgets.QMainWindow):
                 self.drugs_files[current_drug][group_name].add(file_path)
                 self.csv_masks_by_files[file_path] = file_mask
 
+        self.update_files_amount_label()
         self.update_files_list()
         self.send_user_message(files_added_success_string)
 
@@ -288,6 +293,7 @@ class Ui(QtWidgets.QMainWindow):
             del self.drugs_files[current_drug][group_name]
             self.update_files_list()
             self.send_user_message(get_group_deletion_success_string(group_name))
+            self.update_files_amount_label()
             return
 
         file_to_remove = self.files_by_visualized_names[item.text()]
@@ -296,6 +302,7 @@ class Ui(QtWidgets.QMainWindow):
         self.drugs_files[current_drug][drug_group].remove(file_to_remove)
         self.update_files_list()
         self.send_user_message(get_file_deletion_success_string(file_to_remove))
+        self.update_files_amount_label()
 
 
 class Ui_Dialog(QtWidgets.QDialog):

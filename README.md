@@ -1,5 +1,7 @@
 # Animal running trajectories analysis iterface
 This app is destined for analysis of dogs running trajectories using Python's Pandas and [StatTools](https://gitlab.com/digiratory/StatTools) libs. Interface was created usinig *PyQt5*
+
+
 Input - bunch of .csv files with trajectories data of some drugs, every drug must have several groups of dosage and control group
 There are some examples of input data in Dogs_interface\trajectories
  Output - categorical plots of some movement parameters such as *Average speed*, *Total distance* ...  

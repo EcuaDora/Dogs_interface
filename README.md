@@ -3,8 +3,9 @@ This app is destined for analysis of dogs running trajectories using Python's Pa
 
 
 Input - bunch of .csv files with trajectories data of some drugs, every drug must have several groups of dosage and control group
-There are some examples of input data in Dogs_interface\trajectories
- Output - categorical plots of some movement parameters such as *Average speed*, *Total distance* ...  
+There are some examples of input data in Dogs_interface\trajectories*
+
+Output - categorical plots of some movement parameters such as *Average speed*, *Total distance* ...  
 
 
 ## How to use
@@ -17,11 +18,11 @@ There are some examples of input data in Dogs_interface\trajectories
    ```
    pip install -r requirements.txt
    ```
-- Run main.py file 
+- Run main.py file
    ```
    python main.py
    ```
-   or 
+   or
    ```
    python3 main.py
    ```
@@ -31,10 +32,10 @@ There are some examples of input data in Dogs_interface\trajectories
    ```
    in  */etc/gdm3/custom.conf*
    If its so, comment this line back and reboot
-   
-   
+
+
 ## Project goals
 Project is created in educational goals, by students of Sanit-Petersburg Electrotechnical University
 
-   
+
 ![](https://media.tenor.com/xiII1Xqa0JAAAAAi/cachorro.gif)

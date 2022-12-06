@@ -49,7 +49,7 @@ def validate_csv(file_path):
         else:
             return wrong_columns_amount_error_string
 
-        for current_row_number in count(1):
+        for current_row_number in count(2):
 
             try:
                 row = next(reader)
@@ -58,14 +58,14 @@ def validate_csv(file_path):
                     float(row[coord_indexes["x"]])
                 except ValueError:
                     return 1, get_bad_cell_error_string(
-                        mask["x"], current_row_number, float
+                        scv_format[0], current_row_number, float
                     )
 
                 try:
                     float(row[coord_indexes["y"]])
                 except ValueError:
                     return 1, get_bad_cell_error_string(
-                        mask["y"], current_row_number, float
+                        scv_format[1], current_row_number, float
                     )
 
             except StopIteration:

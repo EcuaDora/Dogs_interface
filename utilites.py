@@ -418,7 +418,6 @@ def conventional_analysis(
 
     # csv_paths = list(set(glob.glob(os.path.join(target_path, '*_parameters.csv'))) - set(glob.glob(os.path.join(target_path, 'model*_parameters.csv'))))
 
-    visual_target_path
     os.makedirs(visual_target_path, exist_ok=True)
 
     columns = [
@@ -505,12 +504,14 @@ def conventional_analysis(
             title, fontsize=20, fontdict={"weight": "bold"}, y=1.025, x=0.56
         )
         plt.figtext(0.35, 0.04, "Effector dose")
+        file_path = os.path.join(visual_target_path, col) + "_boxplot.svg"
         plt.savefig(
-            os.path.join(visual_target_path, col) + "_boxplot.svg",
+            file_path,
             format="svg",
             bbox_inches="tight",
             bbox_extra_artists=[my_suptitle],
         )
+        yield [g, file_path, title]
 
 
 def get_statistics_model(
@@ -728,12 +729,14 @@ def model_analysis(
             title, fontsize=20, fontdict={"weight": "bold"}, y=1.025, x=0.56
         )
         plt.figtext(0.35, 0.04, "Effector dose")
+        file_path = os.path.join(visual_target_path, col) + "_boxplot.svg"
         plt.savefig(
-            os.path.join(visual_target_path, col) + "_boxplot.svg",
+            file_path,
             format="svg",
             bbox_inches="tight",
             bbox_extra_artists=[my_suptitle],
         )
+        yield [g, file_path, title]
 
 
 def model_trajectory_simulation(

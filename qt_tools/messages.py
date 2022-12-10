@@ -2,6 +2,7 @@
 def get_bad_cell_error_string(cell_number, row_number, cell_type):
     return f"Cell {cell_number} in row {row_number} could not be converted to {str(cell_type)}"
 
+
 # Плохое расширение
 bad_extension_error_string = "File has illegal extension"
 
@@ -28,6 +29,7 @@ def file_name_wrong_format(file_path, drug_name):
     return (
         f"File {file_path} doesnt match template: {drug_name}_<group_name>_<number>.csv"
     )
+
 
 # У лекарства нету контрольной группы
 def drug_doesnt_have_control_group(drug):
@@ -63,7 +65,7 @@ greeting_message_string = """ Woof - Woof! 🐶
 
 # Строка с выбраными файлами
 def get_chosen_files_label(files):
-  #  print(files)
+    #  print(files)
     files_amount = 0
     for group_files in files.values():
         files_amount += len(group_files)
@@ -91,6 +93,7 @@ files_added_success_string = "File(s) are added"
 
 
 no_files_error_string = "Add some files first"
+
 
 def get_analysis_type_is_chosen_success_string(analysis_type):
     return f"Analysis type {analysis_type} is chosen"

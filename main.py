@@ -1,5 +1,3 @@
-from copyreg import pickle
-from mimetypes import init
 import os
 from shutil import rmtree
 import platform
@@ -11,7 +9,9 @@ from qt_tools.validate_csv_file import validate_csv, check_files_names
 from pprint import pprint
 from collections import OrderedDict
 from functools import partial
-import time
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.figure import Figure
 
 if platform.system() == "Linux":
     os.environ["QT_QPA_PLATFORM"] = "wayland"
@@ -40,18 +40,27 @@ DEFAULT_DRUGS = []
 DRUGS_DATA = {}
 FILES_MASKS = {}
 ANALYSIS_TYPE = None
+PLOTS = []
 TARGET_PATH = os.path.join(os.getcwd(), "data", "original", "parameters")
 VISUAL_TARGET_PATH = os.path.join(os.getcwd(), "data", "original", "visualization")
 
 
 class ModelAnalysisThread(QtCore.QThread):
     def run(self):
-        model_analysis(DRUGS_DATA, TARGET_PATH, VISUAL_TARGET_PATH, FILES_MASKS)
+        global PLOTS
+        PLOTS.extend(
+            model_analysis(DRUGS_DATA, TARGET_PATH, VISUAL_TARGET_PATH, FILES_MASKS)
+        )
 
 
 class ConvAnalysisThread(QtCore.QThread):
     def run(self):
-        conventional_analysis(DRUGS_DATA, TARGET_PATH, VISUAL_TARGET_PATH, FILES_MASKS)
+        global PLOTS
+        PLOTS.extend(
+            conventional_analysis(
+                DRUGS_DATA, TARGET_PATH, VISUAL_TARGET_PATH, FILES_MASKS
+            )
+        )
 
 
 def sort_by_groups_names(group_name):
@@ -61,9 +70,9 @@ def sort_by_groups_names(group_name):
     return int(group_name.replace("mg", ""))
 
 
-class Ui(QtWidgets.QMainWindow):
+class FirstWindow(QtWidgets.QMainWindow):
     def __init__(self):
-        super(Ui, self).__init__()
+        super(FirstWindow, self).__init__()
         uic.loadUi(FIRST_WINDOW_PATH, self)
 
         self.setWindowTitle("Analysis")
@@ -305,9 +314,9 @@ class Ui(QtWidgets.QMainWindow):
         self.update_files_amount_label()
 
 
-class Ui_Dialog(QtWidgets.QDialog):
+class SecondWindow(QtWidgets.QDialog):
     def __init__(self):
-        super(Ui_Dialog, self).__init__()
+        super(SecondWindow, self).__init__()
         uic.loadUi(SECOND_WINDOW_PATH, self)
         self.graphicsView = self.findChild(QtWidgets.QGraphicsView, "graphicsView")
         self.textBrowser = self.findChild(QtWidgets.QTextBrowser, "textBrowser")
@@ -323,19 +332,22 @@ class Ui_Dialog(QtWidgets.QDialog):
         scr.setFixedSize(1200, 730)
         scr.move(0, 70)
         pnl = QtWidgets.QDialog(self)
-
         vbox = QtWidgets.QGridLayout(self)
         images_dir = os.path.join("data", "original", "visualization")
-        images = os.listdir(images_dir)
+        # images = os.listdir(images_dir)
+        images = PLOTS
+
         amount = len(images)
 
         j = 1
         k = 1
-        n = 1  # количество картинок в строке
+        n = None  # количество картинок в строке
 
         for i in range(amount):
 
-            pxm_path = os.path.join("data/original/visualization", images[i])
+            pxm_path = images[i][1]
+            plot = images[i][0]
+            # pxm_path = os.path.join("data/original/visualization", file_path)
             name_lbl = QtWidgets.QLabel()
             # but = QtWidgets.QPushButton()
 
@@ -343,6 +355,8 @@ class Ui_Dialog(QtWidgets.QDialog):
             name_lbl.setScaledContents(1)
 
             pxm_width = self.pxm.width()
+            if not pxm_width:
+                continue
 
             if pxm_width > 1000:
                 self.pxm = self.pxm.scaledToWidth(1160 / 2)
@@ -360,7 +374,7 @@ class Ui_Dialog(QtWidgets.QDialog):
             #   but.setStyleSheet("background-color: white")
             #   but.setAutoFillBackground(1)
 
-            if i == 0:
+            if not n:
                 n = int(1140 // self.pxm.width())
 
             name_lbl.setBackgroundRole(QtGui.QPalette.Dark)
@@ -379,46 +393,43 @@ class Ui_Dialog(QtWidgets.QDialog):
             #   vbox.addWidget(but, j, k)
 
             k = k + 1
-            name_lbl.mousePressEvent = partial(self.emit_zoom, pic=pxm_path)
+            name_lbl.mousePressEvent = partial(
+                self.emit_zoom, pic=plot, title=images[i][2]
+            )
         #  but.mouseDoubleClickEvent = partial(self.emit_zoom, pic = pxm_path)
 
         pnl.setLayout(vbox)
         scr.setWidget(pnl)
         self.show()
 
-    def emit_zoom(self, event, pic):
-        global PIC_TO_SHOW
-        PIC_TO_SHOW = pic
+    def emit_zoom(self, event, pic, title):
+        # global PIC_TO_SHOW
+        # PIC_TO_SHOW = pic
 
-        self.zoomed_window = Ui_Dialog_graphics(PIC_TO_SHOW)
+        self.zoomed_window = PlotWindow(pic, title)
         self.zoomed_window.show()
 
 
-class Ui_Dialog_graphics(QtWidgets.QDialog):
-    def __init__(self, pic):
-        super(Ui_Dialog_graphics, self).__init__()
-        uic.loadUi(THIRD_WINDOW_PATH, self)
-        self.setWindowTitle("Zoomed graphic")
+class PlotWindow(QtWidgets.QDialog):
+    def __init__(self, plot, title):
+        super(PlotWindow, self).__init__()
 
-        pic_path = pic
+        self.figure = plot.figure
+        self.canvas = FigureCanvas(self.figure)
+        self.canvas.setSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+        )
 
-        label = self.findChild(QtWidgets.QLabel, "label")
-
-        pxm = QtGui.QPixmap(pic_path)
-
-        label.setPixmap(pxm)
-        label.resize(pxm.width(), pxm.height())
-        label.setScaledContents(1)
-
-        self.setFixedSize(pxm.width() + 30, pxm.height() + 30)
+        self.toolbar = NavigationToolbar(self.canvas, self)
+        self.layout = QtWidgets.QVBoxLayout(self)
+        self.layout.addWidget(self.canvas)
+        self.layout.addWidget(self.toolbar)
+        self.setWindowTitle(title)
+        self.show()
 
 
-class MyWin(QtWidgets.QMainWindow):
-    def __init__(self):
-        super(MyWin, self).__init__()
-
+class WindowsManager:
     def start_analysis(self):
-        # print(ANALYSIS_TYPE)
 
         if ANALYSIS_TYPE == "type_1":
             self.thread = ConvAnalysisThread()
@@ -431,20 +442,20 @@ class MyWin(QtWidgets.QMainWindow):
             self.thread.start()
 
     def show_window_1(self):
-        self.w1 = Ui()
+        self.w1 = FirstWindow()
 
         self.w1.ready_for_2_window.clicked.connect(self.start_analysis)
         self.w1.show()
 
     def show_window_2(self):
         self.w1.close()
-        self.w2 = Ui_Dialog()
+        self.w2 = SecondWindow()
         self.w2.show()
 
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
-    w = MyWin()
+    w = WindowsManager()
     w.show_window_1()
 
     sys.exit(app.exec_())
